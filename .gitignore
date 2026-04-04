@@ -1,0 +1,53 @@
+# === Python ===
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+eggs/
+*.egg
+
+# === Virtual environments ===
+venv/
+.venv/
+env/
+
+# === IDE ===
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# === Secrets (NEVER commit) ===
+.env
+config/providers.yaml
+
+# === Runtime database (regenerated from synthetic data) ===
+data/demo.db
+data/demo.db-shm
+data/demo.db-wal
+
+# === Model cache ===
+.cache/
+models_cache/
+
+# === Test artifacts ===
+.pytest_cache/
+htmlcov/
+.coverage
+coverage.xml
+
+# === Databricks ===
+.databricks/
+*.whl
+
+# === Logs ===
+*.log
+logs/
+
+# === OS ===
+Thumbs.db

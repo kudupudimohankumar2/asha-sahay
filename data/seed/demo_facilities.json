@@ -1,0 +1,38 @@
+[
+  {
+    "facility_id": "f001",
+    "name": "Gram Panchayat PHC Hosahalli",
+    "facility_type": "PHC",
+    "village": "Hosahalli",
+    "district": "Bengaluru Rural",
+    "phone": "080-12345678",
+    "available_slots": ["09:00-10:00", "10:00-11:00", "11:00-12:00", "14:00-15:00", "15:00-16:00"]
+  },
+  {
+    "facility_id": "f002",
+    "name": "Community Health Centre Nelamangala",
+    "facility_type": "CHC",
+    "village": "Nelamangala",
+    "district": "Bengaluru Rural",
+    "phone": "080-23456789",
+    "available_slots": ["09:00-10:00", "10:00-11:00", "11:00-12:00"]
+  },
+  {
+    "facility_id": "f003",
+    "name": "District Hospital Bengaluru Rural",
+    "facility_type": "DH",
+    "village": "Doddaballapur",
+    "district": "Bengaluru Rural",
+    "phone": "080-34567890",
+    "available_slots": ["09:00-10:00", "10:00-11:00", "14:00-15:00"]
+  },
+  {
+    "facility_id": "f004",
+    "name": "Anganwadi Centre 1 - Hosahalli",
+    "facility_type": "AWC",
+    "village": "Hosahalli",
+    "district": "Bengaluru Rural",
+    "phone": "",
+    "available_slots": ["09:00-12:00"]
+  }
+]

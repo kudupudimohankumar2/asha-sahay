@@ -1,0 +1,47 @@
+CHC Varanasi Block
+ANTENATAL CHECK-UP REPORT
+==================================================
+Date: 18-03-2026
+Patient: Rajeshwari Rao
+Age: 30 years
+Registration No: ANC/2424/2026
+
+VITALS:
+  Blood Pressure: 122/78 mmHg
+  Pulse Rate: 82 bpm
+  Weight: 68.0 kg
+  Height: 158 cm
+
+INVESTIGATIONS:
+  Hemoglobin: 11.8 g/dL
+  Blood Group: A+
+  Fasting Blood Sugar: 132 mg/dL    *** HIGH ***
+  75g OGTT 2hr: 178 mg/dL    *** HIGH ***
+  HbA1c: 6.4%
+  Urine Albumin: Nil
+  Urine Sugar: +
+
+OBSTETRIC EXAMINATION:
+  Gestational Age: 30 weeks
+  Fundal Height: 32 cm (large for dates)
+  Fetal Heart Rate: 152 bpm
+  Fetal Movement: Present, active
+
+IMPRESSION:
+  1. Gestational Diabetes Mellitus (GDM)
+  2. Large for gestational age
+  3. Otherwise healthy pregnancy
+
+ADVICE:
+  1. Dietary modification: Low GI foods, whole grains
+  2. Small frequent meals (6 per day)
+  3. Avoid refined sugar, excess rice
+  4. Walking 30 min after meals
+  5. Metformin 500mg BD - started
+  6. Blood sugar monitoring: fasting and 2hr PP weekly
+  7. Growth scan at 32 weeks
+  8. Weekly monitoring from 34 weeks
+  9. Follow up: 1 week with sugar log
+  10. Delivery planning: by 38-39 weeks
+
+Examining Doctor: Dr. Vikram Singh

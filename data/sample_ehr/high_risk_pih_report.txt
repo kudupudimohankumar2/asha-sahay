@@ -1,0 +1,62 @@
+PHC Kuppam
+ANTENATAL CHECK-UP REPORT
+==================================================
+Date: 25-03-2026
+Patient: Meena Kumari
+Age: 32 years
+Registration No: ANC/4657/2026
+
+VITALS:
+  Blood Pressure: 152/98 mmHg    *** HIGH ***
+  Pulse Rate: 92 bpm
+  Temperature: 98.2 F
+  Weight: 72.0 kg (BMI: 28.1)
+  Height: 160 cm
+
+INVESTIGATIONS:
+  Hemoglobin: 9.8 g/dL
+  Blood Group: O+
+  Fasting Blood Sugar: 105 mg/dL
+  Post Prandial Sugar: 148 mg/dL
+  Urine Albumin: +    *** POSITIVE ***
+  Urine Sugar: Nil
+  Serum Creatinine: 0.8 mg/dL
+
+OBSTETRIC EXAMINATION:
+  Gestational Age: 32 weeks
+  Fundal Height: 30 cm
+  Fetal Heart Rate: 138 bpm
+  Fetal Movement: Present
+  Presentation: Cephalic
+
+GENERAL EXAMINATION:
+  Pallor: Mild
+  Edema: Present (pedal and pretibial)
+  Deep Tendon Reflexes: Brisk
+
+OBSTETRIC HISTORY:
+  G3P2L2
+  Previous C-section: Yes (2023)
+  History of Pre-eclampsia: Yes (2nd pregnancy)
+
+IMPRESSION:
+  1. HIGH RISK PREGNANCY
+  2. Pregnancy Induced Hypertension (PIH)
+  3. Proteinuria - possible Pre-eclampsia
+  4. Previous Caesarean Section
+  5. Mild anemia
+  6. Borderline GDM
+
+ADVICE:
+  1. Labetalol 100mg BD - continue
+  2. IFA tablet 2 OD
+  3. Calcium 1 BD
+  4. STRICT bed rest
+  5. Daily BP monitoring at home
+  6. Watch for danger signs: headache, blurred vision, epigastric pain
+  7. Weekly follow up
+  8. Delivery planning: Refer to DH for elective C-section at 37-38 weeks
+  9. PMSMA visit on 9th for specialist review
+  10. If BP > 160/110 or visual disturbances: GO TO HOSPITAL IMMEDIATELY
+
+Examining Doctor: Dr. Anjali Patil

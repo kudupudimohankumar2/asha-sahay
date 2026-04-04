@@ -1,0 +1,74 @@
+bundle:
+  name: asha_sahayak
+
+workspace:
+  host: ${DATABRICKS_HOST}
+
+resources:
+  apps:
+    asha_sahayak:
+      name: "asha-sahayak"
+      description: "AI-powered multilingual maternal health assistant for ASHA workers"
+      source_code_path: .
+      config:
+        - name: SARVAM_API_KEY
+          description: "Sarvam AI API key for reasoning, translation, STT"
+        - name: REASONING_PROVIDER
+          description: "LLM provider: sarvam, databricks, mock"
+          value: "sarvam"
+        - name: TRANSLATION_PROVIDER
+          description: "Translation provider: sarvam, mock"
+          value: "sarvam"
+        - name: SPEECH_PROVIDER
+          description: "STT provider: sarvam, mock"
+          value: "sarvam"
+        - name: VISION_PROVIDER
+          description: "OCR provider: pytesseract, sarvam, mock"
+          value: "mock"
+        - name: EMBEDDING_PROVIDER
+          description: "Embedding provider: local, mock"
+          value: "mock"
+        - name: DEMO_MODE
+          description: "Run in demo mode with sample data"
+          value: "true"
+
+  jobs:
+    daily_refresh:
+      name: "asha_sahayak_daily_refresh"
+      schedule:
+        quartz_cron_expression: "0 0 5 * * ?"
+        timezone_id: "Asia/Kolkata"
+      tasks:
+        - task_key: risk_refresh
+          notebook_task:
+            notebook_path: ./pipelines/risk_refresh.py
+            source: WORKSPACE
+        - task_key: schedule_refresh
+          depends_on:
+            - task_key: risk_refresh
+          notebook_task:
+            notebook_path: ./pipelines/daily_refresh.py
+            source: WORKSPACE
+        - task_key: dashboard_snapshot
+          depends_on:
+            - task_key: schedule_refresh
+          notebook_task:
+            notebook_path: ./pipelines/daily_refresh.py
+            source: WORKSPACE
+
+    weekly_summary:
+      name: "asha_sahayak_weekly_summary"
+      schedule:
+        quartz_cron_expression: "0 0 4 ? * MON"
+        timezone_id: "Asia/Kolkata"
+      tasks:
+        - task_key: weekly_ration_aggregate
+          notebook_task:
+            notebook_path: ./pipelines/weekly_summary.py
+            source: WORKSPACE
+        - task_key: weekly_village_summary
+          depends_on:
+            - task_key: weekly_ration_aggregate
+          notebook_task:
+            notebook_path: ./pipelines/weekly_summary.py
+            source: WORKSPACE

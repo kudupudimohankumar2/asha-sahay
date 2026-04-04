@@ -1,0 +1,89 @@
+app:
+  name: "ASHA Sahayak"
+  version: "1.1.0"
+  demo_mode: false
+  default_language: "hi"
+  pivot_language: "en"
+  supported_languages:
+    - code: "hi"
+      name: "Hindi"
+      native: "हिन्दी"
+    - code: "en"
+      name: "English"
+      native: "English"
+    - code: "te"
+      name: "Telugu"
+      native: "తెలుగు"
+    - code: "ta"
+      name: "Tamil"
+      native: "தமிழ்"
+    - code: "kn"
+      name: "Kannada"
+      native: "ಕನ್ನಡ"
+    - code: "mr"
+      name: "Marathi"
+      native: "मराठी"
+    - code: "bn"
+      name: "Bengali"
+      native: "বাংলা"
+    - code: "gu"
+      name: "Gujarati"
+      native: "ગુજરાતી"
+    - code: "ml"
+      name: "Malayalam"
+      native: "മലയാളം"
+    - code: "pa"
+      name: "Punjabi"
+      native: "ਪੰਜਾਬੀ"
+    - code: "od"
+      name: "Odia"
+      native: "ଓଡ଼ିଆ"
+
+databricks:
+  catalog: "asha_sahayak"
+  schemas:
+    core: "core"
+    clinical: "clinical"
+    ops: "ops"
+    reference: "reference"
+    serving: "serving"
+  warehouse_id: "${WAREHOUSE_ID}"
+  vector_search_endpoint: "asha_vs_endpoint"
+  volumes:
+    raw_audio: "/Volumes/asha_sahayak/core/raw_audio"
+    raw_images: "/Volumes/asha_sahayak/core/raw_images"
+    raw_pdfs: "/Volumes/asha_sahayak/core/raw_pdfs"
+    extracted: "/Volumes/asha_sahayak/core/extracted"
+    exports: "/Volumes/asha_sahayak/core/exports"
+
+providers:
+  reasoning:
+    default: "sarvam"
+    sarvam:
+      model: "sarvam-m"
+    databricks:
+      model: "databricks-meta-llama-3-1-70b-instruct"
+  translation:
+    default: "sarvam"
+  speech:
+    default: "sarvam"
+  vision:
+    default: "pytesseract"
+  embeddings:
+    default: "local"
+    local:
+      model: "intfloat/multilingual-e5-small"
+      dimension: 384
+
+risk:
+  refresh_interval_hours: 6
+  emergency_auto_alert: true
+
+schedule:
+  pmsma_day: 9
+  anc_intervals_weeks: [12, 20, 28, 34, 36, 38, 40]
+  high_risk_extra_visits: true
+
+ration:
+  scheme_source: "POSHAN_2.0"
+  aggregation_day: "Monday"

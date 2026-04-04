@@ -1,0 +1,69 @@
+[
+  {
+    "patient_id": "demo-patient-001",
+    "obs_date": "2026-03-20",
+    "hemoglobin": 11.5,
+    "systolic_bp": 118,
+    "diastolic_bp": 76,
+    "blood_sugar_fasting": 85,
+    "weight_kg": 58,
+    "urine_protein": "nil",
+    "urine_sugar": "nil",
+    "fetal_movement": "normal",
+    "fetal_heart_rate": 142,
+    "notes": "All vitals normal. Healthy pregnancy."
+  },
+  {
+    "patient_id": "demo-patient-002",
+    "obs_date": "2026-03-15",
+    "hemoglobin": 8.5,
+    "systolic_bp": 110,
+    "diastolic_bp": 72,
+    "blood_sugar_fasting": 88,
+    "weight_kg": 52,
+    "urine_protein": "nil",
+    "urine_sugar": "nil",
+    "fetal_movement": "normal",
+    "fetal_heart_rate": 148,
+    "pallor": "moderate",
+    "notes": "Moderate anemia. Pallor present. Advised double IFA."
+  },
+  {
+    "patient_id": "demo-patient-003",
+    "obs_date": "2026-03-25",
+    "hemoglobin": 9.8,
+    "systolic_bp": 152,
+    "diastolic_bp": 98,
+    "blood_sugar_fasting": 105,
+    "weight_kg": 72,
+    "urine_protein": "+",
+    "urine_sugar": "nil",
+    "edema": "present",
+    "fetal_movement": "normal",
+    "fetal_heart_rate": 138,
+    "notes": "Elevated BP. Urine protein positive. Edema present. Previous preeclampsia history. HIGH RISK."
+  },
+  {
+    "patient_id": "demo-patient-004",
+    "obs_date": "2026-03-28",
+    "hemoglobin": 12.2,
+    "systolic_bp": 112,
+    "diastolic_bp": 70,
+    "weight_kg": 55,
+    "urine_protein": "nil",
+    "urine_sugar": "nil",
+    "notes": "Early pregnancy. All vitals normal."
+  },
+  {
+    "patient_id": "demo-patient-005",
+    "obs_date": "2026-03-22",
+    "hemoglobin": 10.5,
+    "systolic_bp": 108,
+    "diastolic_bp": 68,
+    "weight_kg": 45,
+    "urine_protein": "nil",
+    "urine_sugar": "nil",
+    "fetal_movement": "normal",
+    "notes": "Adolescent pregnancy. Weight on lower side. Need monitoring."
+  }
+]

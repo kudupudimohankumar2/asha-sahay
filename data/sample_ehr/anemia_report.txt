@@ -1,0 +1,49 @@
+Community Health Centre Nelamangala
+ANTENATAL CHECK-UP REPORT
+==================================================
+Date: 15-03-2026
+Patient: Priya Sharma
+Age: 28 years
+Registration No: ANC/5506/2026
+
+VITALS:
+  Blood Pressure: 110/72 mmHg
+  Pulse Rate: 88 bpm
+  Temperature: 98.6 F
+  Weight: 52.0 kg
+  Height: 150 cm
+
+INVESTIGATIONS:
+  Hemoglobin: 8.5 g/dL    *** LOW ***
+  Blood Group: A+
+  Fasting Blood Sugar: 88 mg/dL
+  Urine Albumin: Nil
+  Urine Sugar: Nil
+
+OBSTETRIC EXAMINATION:
+  Gestational Age: 28 weeks
+  Fundal Height: 27 cm
+  Fetal Heart Rate: 148 bpm
+  Fetal Movement: Present, Normal
+
+GENERAL EXAMINATION:
+  Pallor: Present (moderate)
+  Tongue: Pale
+  Nails: Koilonychia noted
+  Edema: Absent
+
+IMPRESSION:
+  1. Moderate anemia (Hb 8.5 g/dL)
+  2. Otherwise normal pregnancy at 28 weeks
+
+ADVICE:
+  1. IFA tablet: Increase to 2 tablets daily (morning and evening)
+  2. Calcium tablet 1 BD continue
+  3. Iron-rich diet: green leafy vegetables, jaggery, dates
+  4. Vitamin C with iron tablet for absorption
+  5. Avoid tea/coffee with meals
+  6. Repeat Hb after 4 weeks
+  7. Follow up: 2 weeks
+  8. Refer to PHC if Hb does not improve
+
+Examining Doctor: Dr. Anjali Patil

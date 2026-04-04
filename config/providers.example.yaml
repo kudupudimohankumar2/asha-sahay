@@ -1,0 +1,51 @@
+# Provider configuration reference — ASHA Sahayak
+#
+# All providers are configured via environment variables or config/app_config.yaml.
+# API keys should ONLY be set via .env file or environment variables, never in YAML.
+#
+# Install the official SDK: pip install sarvamai
+
+# ── Reasoning (LLM chat completions) ────────────────────────────────
+# Provider: sarvam | databricks | mock
+# Env var:  REASONING_PROVIDER
+#
+# Sarvam models (India-built):
+#   sarvam-m     — 24B params, good cost/quality balance (default)
+#   sarvam-30b   — 30B params, higher quality
+#   sarvam-105b  — 105B params, highest quality
+#
+# Databricks Foundation Models:
+#   databricks-meta-llama-3-1-70b-instruct
+
+# ── Translation ─────────────────────────────────────────────────────
+# Provider: sarvam | mock
+# Env var:  TRANSLATION_PROVIDER
+#
+# Sarvam Translate supports all 22 official Indian languages + English.
+# Auto-detection: source_language_code="auto" is supported.
+
+# ── Speech-to-Text ──────────────────────────────────────────────────
+# Provider: sarvam | mock
+# Env var:  SPEECH_PROVIDER
+#
+# Model: saaras:v3 (latest, replaces deprecated saarika:v2)
+# Modes: transcribe, translate, verbatim, translit, codemix
+
+# ── Vision / OCR ────────────────────────────────────────────────────
+# Provider: pytesseract | sarvam | mock
+# Env var:  VISION_PROVIDER
+#
+# pytesseract — local OCR using Tesseract (free, no API key)
+#   Requires: apt-get install tesseract-ocr tesseract-ocr-hin
+#
+# sarvam — Sarvam Vision Document Intelligence (3B multimodal model)
+#   Supports 23 languages, table extraction, structure preservation
+#   Falls back to pytesseract on failure
+
+# ── Embeddings ──────────────────────────────────────────────────────
+# Provider: local | mock
+# Env var:  EMBEDDING_PROVIDER
+#
+# local — intfloat/multilingual-e5-small via sentence-transformers
+#   Dimension: 384, supports 100+ languages including all major Indian languages
+#   CPU-friendly, ~470MB download on first use

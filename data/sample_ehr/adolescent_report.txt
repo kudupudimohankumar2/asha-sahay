@@ -1,0 +1,47 @@
+District Hospital Varanasi
+ANTENATAL CHECK-UP REPORT
+==================================================
+Date: 22-03-2026
+Patient: Sunita Bai
+Age: 17 years
+Registration No: ANC/2679/2026
+
+VITALS:
+  Blood Pressure: 108/68 mmHg
+  Pulse Rate: 80 bpm
+  Temperature: 98.4 F
+  Weight: 45.0 kg    *** LOW ***
+  Height: 148 cm (BMI: 20.5)
+
+INVESTIGATIONS:
+  Hemoglobin: 10.5 g/dL
+  Blood Group: B+
+  Fasting Blood Sugar: 78 mg/dL
+  Urine Albumin: Nil
+  Urine Sugar: Nil
+
+OBSTETRIC EXAMINATION:
+  Gestational Age: 24 weeks (Primigravida)
+  Fundal Height: 22 cm
+  Fetal Heart Rate: 146 bpm
+  Fetal Movement: Present
+
+NOTE: ADOLESCENT PREGNANCY (Age 17 years)
+  - Increased risk of preterm delivery
+  - Increased risk of low birth weight
+  - Requires specialist consultation
+  - Nutritional counselling critical
+  - Psychosocial support needed
+
+ADVICE:
+  1. IFA tablet 1 OD
+  2. Calcium 1 BD
+  3. Folic acid supplementation
+  4. HIGH PROTEIN, HIGH CALORIE DIET
+  5. Supplementary nutrition from Anganwadi (THR)
+  6. Specialist consultation at CHC
+  7. Counselling: birth preparedness, danger signs
+  8. Follow up: 2 weeks
+  9. PMSMA visit for specialist review
+
+Examining Doctor: Dr. Vikram Singh

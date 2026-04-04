@@ -1,0 +1,151 @@
+[
+  {
+    "facility_id": "f-hos-phc",
+    "name": "PHC Hosahalli",
+    "facility_type": "PHC",
+    "village": "Hosahalli",
+    "district": "Bengaluru Rural",
+    "phone": "080-12345678",
+    "available_slots": [
+      "09:00-10:00",
+      "10:00-11:00",
+      "11:00-12:00",
+      "14:00-15:00",
+      "15:00-16:00"
+    ]
+  },
+  {
+    "facility_id": "f-hos-chc",
+    "name": "CHC Nelamangala",
+    "facility_type": "CHC",
+    "village": "Hosahalli",
+    "district": "Bengaluru Rural",
+    "phone": "080-23456789",
+    "available_slots": [
+      "09:00-10:00",
+      "10:00-11:00",
+      "11:00-12:00"
+    ]
+  },
+  {
+    "facility_id": "f-hos-dh",
+    "name": "District Hospital Bengaluru Rural",
+    "facility_type": "DH",
+    "village": "Doddaballapur",
+    "district": "Bengaluru Rural",
+    "phone": "080-34567890",
+    "available_slots": [
+      "09:00-10:00",
+      "10:00-11:00",
+      "14:00-15:00"
+    ]
+  },
+  {
+    "facility_id": "f-hos-awc",
+    "name": "AWC-1 Hosahalli",
+    "facility_type": "AWC",
+    "village": "Hosahalli",
+    "district": "Bengaluru Rural",
+    "phone": "",
+    "available_slots": [
+      "09:00-12:00"
+    ]
+  },
+  {
+    "facility_id": "f-kup-phc",
+    "name": "PHC Kuppam",
+    "facility_type": "PHC",
+    "village": "Kuppam",
+    "district": "Chittoor",
+    "phone": "0877-2345678",
+    "available_slots": [
+      "09:00-10:00",
+      "10:00-11:00",
+      "14:00-15:00"
+    ]
+  },
+  {
+    "facility_id": "f-kup-chc",
+    "name": "CHC Kuppam Town",
+    "facility_type": "CHC",
+    "village": "Kuppam",
+    "district": "Chittoor",
+    "phone": "0877-2345679",
+    "available_slots": [
+      "09:00-11:00",
+      "14:00-16:00"
+    ]
+  },
+  {
+    "facility_id": "f-kup-awc",
+    "name": "AWC-1 Kuppam",
+    "facility_type": "AWC",
+    "village": "Kuppam",
+    "district": "Chittoor",
+    "phone": "",
+    "available_slots": [
+      "09:00-12:00"
+    ]
+  },
+  {
+    "facility_id": "f-arj-phc",
+    "name": "PHC Arjunpur",
+    "facility_type": "PHC",
+    "village": "Arjunpur",
+    "district": "Varanasi",
+    "phone": "0542-1234567",
+    "available_slots": [
+      "09:00-10:00",
+      "10:00-11:00",
+      "11:00-12:00"
+    ]
+  },
+  {
+    "facility_id": "f-arj-chc",
+    "name": "CHC Varanasi Block",
+    "facility_type": "CHC",
+    "village": "Arjunpur",
+    "district": "Varanasi",
+    "phone": "0542-1234568",
+    "available_slots": [
+      "09:00-11:00",
+      "14:00-16:00"
+    ]
+  },
+  {
+    "facility_id": "f-arj-dh",
+    "name": "District Hospital Varanasi",
+    "facility_type": "DH",
+    "village": "Varanasi",
+    "district": "Varanasi",
+    "phone": "0542-1234569",
+    "available_slots": [
+      "09:00-10:00",
+      "10:00-11:00",
+      "14:00-15:00",
+      "15:00-16:00"
+    ]
+  },
+  {
+    "facility_id": "f-arj-awc",
+    "name": "AWC-1 Arjunpur",
+    "facility_type": "AWC",
+    "village": "Arjunpur",
+    "district": "Varanasi",
+    "phone": "",
+    "available_slots": [
+      "09:00-12:00"
+    ]
+  },
+  {
+    "facility_id": "f-arj-fru",
+    "name": "FRU BHU Varanasi",
+    "facility_type": "FRU",
+    "village": "Varanasi",
+    "district": "Varanasi",
+    "phone": "0542-1234570",
+    "available_slots": [
+      "24x7"
+    ]
+  }
+]

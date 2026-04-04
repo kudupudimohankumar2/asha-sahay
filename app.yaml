@@ -1,0 +1,8 @@
+command:
+  - python
+  - app/main.py
+env:
+  - name: GRADIO_SERVER_PORT
+    value: "8080"
+  - name: GRADIO_SERVER_NAME
+    value: "0.0.0.0"

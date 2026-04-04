@@ -1,0 +1,46 @@
+Gram Panchayat PHC Hosahalli
+ANTENATAL CHECK-UP REPORT
+==================================================
+Date: 20-03-2026
+Patient: Lakshmi Devi
+Age: 24 years
+Registration No: ANC/2824/2026
+
+VITALS:
+  Blood Pressure: 118/76 mmHg
+  Pulse Rate: 78 bpm
+  Temperature: 98.4 F
+  Weight: 58.0 kg
+  Height: 155 cm
+
+INVESTIGATIONS:
+  Hemoglobin: 11.5 g/dL
+  Blood Group: B+ (Rh Positive)
+  Fasting Blood Sugar: 85 mg/dL
+  Urine Albumin: Nil
+  Urine Sugar: Nil
+  HIV Screening: Negative
+  VDRL: Non-Reactive
+  HBsAg: Negative
+
+OBSTETRIC EXAMINATION:
+  Gestational Age: 24 weeks
+  Fundal Height: 24 cm
+  Fetal Heart Rate: 142 bpm
+  Fetal Movement: Present, Normal
+  Presentation: Cephalic
+  Liquor: Adequate
+
+IMPRESSION:
+  Normal ongoing pregnancy at 24 weeks.
+  All investigations within normal limits.
+
+ADVICE:
+  1. Continue IFA tablet 1 OD
+  2. Continue Calcium tablet 1 BD
+  3. Diet: Extra meal daily, iron-rich foods
+  4. Rest: 2 hours daytime, 8 hours night
+  5. Follow up: 4 weeks / earlier if danger signs
+  6. Next visit: 17-04-2026
+
+Examining Doctor: Dr. Ramesh Kumar

@@ -1,0 +1,665 @@
+[
+  {
+    "patient_id": "P-E9F444D3",
+    "asha_worker_id": "asha-001",
+    "full_name": "Savita Devi",
+    "age": 25,
+    "village": "Hosahalli",
+    "phone": "9193349856",
+    "language_preference": "kn",
+    "lmp_date": "2026-01-25",
+    "gravida": 2,
+    "parity": 1,
+    "known_conditions": [
+      "epilepsy",
+      "history of preeclampsia"
+    ],
+    "current_medications": [
+      "IFA tablet",
+      "Calcium tablet",
+      "Metformin",
+      "Labetalol"
+    ],
+    "blood_group": "AB+",
+    "height_cm": 146,
+    "risk_profile": "hypertensive"
+  },
+  {
+    "patient_id": "P-F6D4D963",
+    "asha_worker_id": "asha-003",
+    "full_name": "Priya Kumari",
+    "age": 34,
+    "village": "Kuppam",
+    "phone": "9550455977",
+    "language_preference": "te",
+    "lmp_date": "2025-07-06",
+    "gravida": 1,
+    "parity": 0,
+    "known_conditions": [
+      "history of preeclampsia"
+    ],
+    "current_medications": [
+      "IFA tablet",
+      "Calcium tablet",
+      "Metformin",
+      "Labetalol"
+    ],
+    "blood_group": "B-",
+    "height_cm": 159,
+    "risk_profile": "normal"
+  },
+  {
+    "patient_id": "P-4273BC34",
+    "asha_worker_id": "asha-002",
+    "full_name": "Nagamma Yadav",
+    "age": 18,
+    "village": "Arjunpur",
+    "phone": "9266944844",
+    "language_preference": "hi",
+    "lmp_date": "2025-12-28",
+    "gravida": 2,
+    "parity": 1,
+    "known_conditions": [],
+    "current_medications": [
+      "IFA tablet",
+      "Calcium tablet",
+      "Folic acid"
+    ],
+    "blood_group": "B-",
+    "height_cm": 169,
+    "risk_profile": "high_risk"
+  },
+  {
+    "patient_id": "P-E167755D",
+    "asha_worker_id": "asha-001",
+    "full_name": "Bhavani Bai",
+    "age": 21,
+    "village": "Hosahalli",
+    "phone": "9883543540",
+    "language_preference": "kn",
+    "lmp_date": "2025-10-05",
+    "gravida": 2,
+    "parity": 1,
+    "known_conditions": [
+      "asthma"
+    ],
+    "current_medications": [
+      "IFA tablet"
+    ],
+    "blood_group": "AB-",
+    "height_cm": 162,
+    "risk_profile": "normal"
+  },
+  {
+    "patient_id": "P-03017E85",
+    "asha_worker_id": "asha-003",
+    "full_name": "Savita Mishra",
+    "age": 27,
+    "village": "Kuppam",
+    "phone": "9149203558",
+    "language_preference": "te",
+    "lmp_date": "2025-09-28",
+    "gravida": 2,
+    "parity": 1,
+    "known_conditions": [
+      "previous c-section",
+      "history of preeclampsia"
+    ],
+    "current_medications": [
+      "IFA tablet",
+      "Labetalol"
+    ],
+    "blood_group": "B-",
+    "height_cm": 169,
+    "risk_profile": "normal"
+  },
+  {
+    "patient_id": "P-9AFA5C6F",
+    "asha_worker_id": "asha-002",
+    "full_name": "Durga Kumari",
+    "age": 21,
+    "village": "Arjunpur",
+    "phone": "9497478786",
+    "language_preference": "hi",
+    "lmp_date": "2025-08-17",
+    "gravida": 2,
+    "parity": 1,
+    "known_conditions": [],
+    "current_medications": [
+      "IFA tablet",
+      "Calcium tablet"
+    ],
+    "blood_group": "O-",
+    "height_cm": 151,
+    "risk_profile": "high_risk"
+  },
+  {
+    "patient_id": "P-7282BBCB",
+    "asha_worker_id": "asha-001",
+    "full_name": "Shanti Kumari",
+    "age": 23,
+    "village": "Hosahalli",
+    "phone": "9787194506",
+    "language_preference": "kn",
+    "lmp_date": "2025-11-23",
+    "gravida": 1,
+    "parity": 0,
+    "known_conditions": [
+      "mild anemia"
+    ],
+    "current_medications": [
+      "IFA tablet",
+      "Calcium tablet",
+      "Folic acid"
+    ],
+    "blood_group": "B-",
+    "height_cm": 166,
+    "risk_profile": "moderate_anemia"
+  },
+  {
+    "patient_id": "P-CCD5C72E",
+    "asha_worker_id": "asha-003",
+    "full_name": "Manjula Sharma",
+    "age": 19,
+    "village": "Kuppam",
+    "phone": "9870854579",
+    "language_preference": "te",
+    "lmp_date": "2025-09-14",
+    "gravida": 1,
+    "parity": 0,
+    "known_conditions": [],
+    "current_medications": [
+      "IFA tablet",
+      "Calcium tablet",
+      "Metformin"
+    ],
+    "blood_group": "O-",
+    "height_cm": 151,
+    "risk_profile": "normal"
+  },
+  {
+    "patient_id": "P-6C4CEB6B",
+    "asha_worker_id": "asha-002",
+    "full_name": "Girija Mishra",
+    "age": 32,
+    "village": "Arjunpur",
+    "phone": "9382116655",
+    "language_preference": "hi",
+    "lmp_date": "2026-01-11",
+    "gravida": 1,
+    "parity": 0,
+    "known_conditions": [
+      "gestational diabetes"
+    ],
+    "current_medications": [
+      "IFA tablet",
+      "Calcium tablet",
+      "Metformin"
+    ],
+    "blood_group": "AB+",
+    "height_cm": 163,
+    "risk_profile": "high_risk"
+  },
+  {
+    "patient_id": "P-04210612",
+    "asha_worker_id": "asha-001",
+    "full_name": "Revathi Verma",
+    "age": 22,
+    "village": "Hosahalli",
+    "phone": "9264112119",
+    "language_preference": "kn",
+    "lmp_date": "2026-02-01",
+    "gravida": 3,
+    "parity": 2,
+    "known_conditions": [
+      "previous stillbirth"
+    ],
+    "current_medications": [
+      "IFA tablet"
+    ],
+    "blood_group": "B+",
+    "height_cm": 170,
+    "risk_profile": "normal"
+  },
+  {
+    "patient_id": "P-631D5FD2",
+    "asha_worker_id": "asha-003",
+    "full_name": "Vimala Kamath",
+    "age": 30,
+    "village": "Kuppam",
+    "phone": "9830448745",
+    "language_preference": "te",
+    "lmp_date": "2025-08-17",
+    "gravida": 2,
+    "parity": 1,
+    "known_conditions": [
+      "gestational diabetes"
+    ],
+    "current_medications": [
+      "IFA tablet",
+      "Metformin"
+    ],
+    "blood_group": "A-",
+    "height_cm": 166,
+    "risk_profile": "normal"
+  },
+  {
+    "patient_id": "P-A76137A5",
+    "asha_worker_id": "asha-002",
+    "full_name": "Rajeshwari Yadav",
+    "age": 28,
+    "village": "Arjunpur",
+    "phone": "9637500247",
+    "language_preference": "hi",
+    "lmp_date": "2025-08-31",
+    "gravida": 1,
+    "parity": 0,
+    "known_conditions": [
+      "history of preeclampsia"
+    ],
+    "current_medications": [
+      "IFA tablet",
+      "Calcium tablet",
+      "Folic acid",
+      "Labetalol"
+    ],
+    "blood_group": "B+",
+    "height_cm": 161,
+    "risk_profile": "hypertensive"
+  },
+  {
+    "patient_id": "P-EC0DD3D6",
+    "asha_worker_id": "asha-001",
+    "full_name": "Rekha Singh",
+    "age": 34,
+    "village": "Hosahalli",
+    "phone": "9936043811",
+    "language_preference": "kn",
+    "lmp_date": "2026-01-04",
+    "gravida": 1,
+    "parity": 0,
+    "known_conditions": [],
+    "current_medications": [
+      "IFA tablet",
+      "Calcium tablet",
+      "Metformin"
+    ],
+    "blood_group": "A+",
+    "height_cm": 164,
+    "risk_profile": "high_risk"
+  },
+  {
+    "patient_id": "P-4812E745",
+    "asha_worker_id": "asha-003",
+    "full_name": "Manjula Nair",
+    "age": 29,
+    "village": "Kuppam",
+    "phone": "9184564737",
+    "language_preference": "te",
+    "lmp_date": "2025-10-26",
+    "gravida": 1,
+    "parity": 0,
+    "known_conditions": [],
+    "current_medications": [
+      "IFA tablet",
+      "Calcium tablet",
+      "Metformin"
+    ],
+    "blood_group": "A-",
+    "height_cm": 168,
+    "risk_profile": "normal"
+  },
+  {
+    "patient_id": "P-EDC8AB22",
+    "asha_worker_id": "asha-002",
+    "full_name": "Girija Kumari",
+    "age": 35,
+    "village": "Arjunpur",
+    "phone": "9384602384",
+    "language_preference": "hi",
+    "lmp_date": "2026-01-11",
+    "gravida": 2,
+    "parity": 1,
+    "known_conditions": [
+      "gestational diabetes"
+    ],
+    "current_medications": [
+      "IFA tablet",
+      "Calcium tablet",
+      "Metformin"
+    ],
+    "blood_group": "AB+",
+    "height_cm": 151,
+    "risk_profile": "gdm"
+  },
+  {
+    "patient_id": "P-F30C3EDE",
+    "asha_worker_id": "asha-001",
+    "full_name": "Rajeshwari Gowda",
+    "age": 30,
+    "village": "Hosahalli",
+    "phone": "9229927269",
+    "language_preference": "kn",
+    "lmp_date": "2025-09-28",
+    "gravida": 2,
+    "parity": 1,
+    "known_conditions": [
+      "gestational diabetes",
+      "history of preeclampsia"
+    ],
+    "current_medications": [
+      "IFA tablet",
+      "Calcium tablet",
+      "Labetalol",
+      "Metformin"
+    ],
+    "blood_group": "B-",
+    "height_cm": 152,
+    "risk_profile": "hypertensive"
+  },
+  {
+    "patient_id": "P-574F9387",
+    "asha_worker_id": "asha-003",
+    "full_name": "Anita Gupta",
+    "age": 35,
+    "village": "Kuppam",
+    "phone": "9345824373",
+    "language_preference": "te",
+    "lmp_date": "2025-11-30",
+    "gravida": 1,
+    "parity": 0,
+    "known_conditions": [
+      "previous c-section",
+      "history of preeclampsia"
+    ],
+    "current_medications": [
+      "IFA tablet",
+      "Labetalol"
+    ],
+    "blood_group": "A-",
+    "height_cm": 146,
+    "risk_profile": "normal"
+  },
+  {
+    "patient_id": "P-606FAF36",
+    "asha_worker_id": "asha-002",
+    "full_name": "Bhavani Kumari",
+    "age": 26,
+    "village": "Arjunpur",
+    "phone": "9718702544",
+    "language_preference": "hi",
+    "lmp_date": "2025-12-07",
+    "gravida": 2,
+    "parity": 1,
+    "known_conditions": [
+      "previous c-section",
+      "history of preeclampsia"
+    ],
+    "current_medications": [
+      "IFA tablet",
+      "Calcium tablet",
+      "Metformin",
+      "Labetalol"
+    ],
+    "blood_group": "AB-",
+    "height_cm": 152,
+    "risk_profile": "mild_anemia"
+  },
+  {
+    "patient_id": "P-8EBE4C36",
+    "asha_worker_id": "asha-001",
+    "full_name": "Renuka Das",
+    "age": 21,
+    "village": "Hosahalli",
+    "phone": "9823019672",
+    "language_preference": "kn",
+    "lmp_date": "2025-10-05",
+    "gravida": 2,
+    "parity": 1,
+    "known_conditions": [
+      "hypothyroidism"
+    ],
+    "current_medications": [
+      "IFA tablet"
+    ],
+    "blood_group": "A-",
+    "height_cm": 146,
+    "risk_profile": "normal"
+  },
+  {
+    "patient_id": "P-ABA518F7",
+    "asha_worker_id": "asha-003",
+    "full_name": "Revathi Gupta",
+    "age": 21,
+    "village": "Kuppam",
+    "phone": "9297018781",
+    "language_preference": "te",
+    "lmp_date": "2025-12-14",
+    "gravida": 2,
+    "parity": 1,
+    "known_conditions": [],
+    "current_medications": [
+      "IFA tablet",
+      "Calcium tablet",
+      "Labetalol"
+    ],
+    "blood_group": "O+",
+    "height_cm": 159,
+    "risk_profile": "high_risk"
+  },
+  {
+    "patient_id": "P-A9B28B6B",
+    "asha_worker_id": "asha-002",
+    "full_name": "Nirmala Kumari",
+    "age": 35,
+    "village": "Arjunpur",
+    "phone": "9278575192",
+    "language_preference": "hi",
+    "lmp_date": "2025-07-13",
+    "gravida": 3,
+    "parity": 2,
+    "known_conditions": [],
+    "current_medications": [
+      "IFA tablet",
+      "Calcium tablet"
+    ],
+    "blood_group": "AB+",
+    "height_cm": 160,
+    "risk_profile": "mild_anemia"
+  },
+  {
+    "patient_id": "P-BEE72F80",
+    "asha_worker_id": "asha-001",
+    "full_name": "Renuka Gowda",
+    "age": 19,
+    "village": "Hosahalli",
+    "phone": "9406284028",
+    "language_preference": "kn",
+    "lmp_date": "2026-03-08",
+    "gravida": 4,
+    "parity": 3,
+    "known_conditions": [],
+    "current_medications": [
+      "IFA tablet",
+      "Calcium tablet",
+      "Labetalol"
+    ],
+    "blood_group": "AB+",
+    "height_cm": 167,
+    "risk_profile": "high_risk"
+  },
+  {
+    "patient_id": "P-2BC0C98C",
+    "asha_worker_id": "asha-003",
+    "full_name": "Tulasi Nair",
+    "age": 27,
+    "village": "Kuppam",
+    "phone": "9903132646",
+    "language_preference": "te",
+    "lmp_date": "2026-02-15",
+    "gravida": 2,
+    "parity": 1,
+    "known_conditions": [
+      "gestational diabetes"
+    ],
+    "current_medications": [
+      "IFA tablet",
+      "Metformin"
+    ],
+    "blood_group": "O-",
+    "height_cm": 146,
+    "risk_profile": "normal"
+  },
+  {
+    "patient_id": "P-331D4A59",
+    "asha_worker_id": "asha-002",
+    "full_name": "Sunita Shetty",
+    "age": 34,
+    "village": "Arjunpur",
+    "phone": "9738914080",
+    "language_preference": "hi",
+    "lmp_date": "2025-07-27",
+    "gravida": 1,
+    "parity": 0,
+    "known_conditions": [],
+    "current_medications": [
+      "IFA tablet"
+    ],
+    "blood_group": "A-",
+    "height_cm": 166,
+    "risk_profile": "mild_anemia"
+  },
+  {
+    "patient_id": "P-B7F894DD",
+    "asha_worker_id": "asha-001",
+    "full_name": "Nirmala Mishra",
+    "age": 25,
+    "village": "Hosahalli",
+    "phone": "9706907788",
+    "language_preference": "kn",
+    "lmp_date": "2026-02-22",
+    "gravida": 2,
+    "parity": 1,
+    "known_conditions": [
+      "mild anemia"
+    ],
+    "current_medications": [
+      "IFA tablet",
+      "Calcium tablet",
+      "Metformin"
+    ],
+    "blood_group": "O-",
+    "height_cm": 153,
+    "risk_profile": "normal"
+  },
+  {
+    "patient_id": "P-DEBC0E25",
+    "asha_worker_id": "asha-003",
+    "full_name": "Kamala Gupta",
+    "age": 30,
+    "village": "Kuppam",
+    "phone": "9110002396",
+    "language_preference": "te",
+    "lmp_date": "2025-10-26",
+    "gravida": 2,
+    "parity": 1,
+    "known_conditions": [
+      "epilepsy"
+    ],
+    "current_medications": [
+      "IFA tablet"
+    ],
+    "blood_group": "AB-",
+    "height_cm": 164,
+    "risk_profile": "normal"
+  },
+  {
+    "patient_id": "P-31D1F2D8",
+    "asha_worker_id": "asha-002",
+    "full_name": "Mahadevi Bai",
+    "age": 24,
+    "village": "Arjunpur",
+    "phone": "9362298393",
+    "language_preference": "hi",
+    "lmp_date": "2026-01-11",
+    "gravida": 3,
+    "parity": 2,
+    "known_conditions": [
+      "epilepsy"
+    ],
+    "current_medications": [
+      "IFA tablet"
+    ],
+    "blood_group": "O-",
+    "height_cm": 154,
+    "risk_profile": "normal"
+  },
+  {
+    "patient_id": "P-D4C61D79",
+    "asha_worker_id": "asha-001",
+    "full_name": "Sita Rao",
+    "age": 27,
+    "village": "Hosahalli",
+    "phone": "9421455482",
+    "language_preference": "kn",
+    "lmp_date": "2025-07-20",
+    "gravida": 1,
+    "parity": 0,
+    "known_conditions": [
+      "previous stillbirth"
+    ],
+    "current_medications": [
+      "IFA tablet",
+      "Calcium tablet",
+      "Metformin"
+    ],
+    "blood_group": "A-",
+    "height_cm": 149,
+    "risk_profile": "high_risk"
+  },
+  {
+    "patient_id": "P-8CD13894",
+    "asha_worker_id": "asha-003",
+    "full_name": "Pushpa Bai",
+    "age": 35,
+    "village": "Kuppam",
+    "phone": "9318610946",
+    "language_preference": "te",
+    "lmp_date": "2025-11-02",
+    "gravida": 2,
+    "parity": 1,
+    "known_conditions": [
+      "previous c-section",
+      "history of preeclampsia"
+    ],
+    "current_medications": [
+      "IFA tablet",
+      "Calcium tablet",
+      "Folic acid",
+      "Labetalol"
+    ],
+    "blood_group": "O+",
+    "height_cm": 161,
+    "risk_profile": "high_risk"
+  },
+  {
+    "patient_id": "P-07F9E027",
+    "asha_worker_id": "asha-002",
+    "full_name": "Girija Yadav",
+    "age": 17,
+    "village": "Arjunpur",
+    "phone": "9784095277",
+    "language_preference": "hi",
+    "lmp_date": "2025-11-09",
+    "gravida": 1,
+    "parity": 0,
+    "known_conditions": [],
+    "current_medications": [
+      "IFA tablet",
+      "Calcium tablet"
+    ],
+    "blood_group": "O+",
+    "height_cm": 150,
+    "risk_profile": "emergency"
+  }
+]
