@@ -162,14 +162,25 @@ This uploads all source code (respecting `.gitignore`) and creates:
 
 ### Step 5: Set App Environment Variables
 
-After the first deploy, set the Sarvam API key:
+After the first deploy, set the Sarvam API key via Databricks Secrets:
+
+```bash
+# Create the secret scope (one-time setup)
+databricks secrets create-scope asha-sahayak
+
+# Store the Sarvam API key in the scope
+databricks secrets put-secret asha-sahayak sarvam_api_key --string-value "<YOUR_SARVAM_API_KEY>"
+```
+
+Alternatively, you can set it as an environment variable in the app configuration:
 
 ```bash
 # Via Databricks workspace UI:
 # Apps → asha-sahayak → Configuration → Add environment variables
+# Set SARVAM_API_KEY=<your_key>
 ```
 
-Or update `databricks.yml` with your key before deploying (not recommended — keeps secrets out of code).
+The app resolves the key in order: env var `SARVAM_API_KEY` → Databricks secret scope `asha-sahayak/sarvam_api_key`.
 
 ### Step 6: Start the App
 

@@ -3,8 +3,9 @@
 Resolution order for each setting:
   1. Explicit argument passed to factory function
   2. Environment variable (e.g. REASONING_PROVIDER, SARVAM_API_KEY)
-  3. Value from config/app_config.yaml
-  4. Hardcoded default
+  3. Databricks secret scope (scope='asha-sahayak', key='sarvam_api_key')
+  4. Value from config/app_config.yaml
+  5. Hardcoded default
 """
 
 import os
@@ -68,8 +69,47 @@ def _cfg_provider_section(provider_type: str, backend: str) -> Dict[str, Any]:
     return cfg.get("providers", {}).get(provider_type, {}).get(backend, {})
 
 
+def _get_databricks_secret(scope: str, key: str) -> Optional[str]:
+    """Retrieve a secret from Databricks secret scope.
+
+    Works in two contexts:
+    1. Notebook / cluster: via dbutils.secrets.get()
+    2. Databricks Apps: secrets are injected as environment variables
+    """
+    # First, try dbutils (available in notebook/cluster context)
+    try:
+        from databricks.sdk import WorkspaceClient
+        w = WorkspaceClient()
+        # Use the SDK's dbutils proxy to fetch the secret
+        secret_value = w.dbutils.secrets.get(scope=scope, key=key)
+        if secret_value:
+            logger.info(f"Retrieved secret '{key}' from Databricks scope '{scope}'")
+            return secret_value
+    except ImportError:
+        logger.debug("databricks-sdk not installed — skipping Databricks secret lookup")
+    except Exception as e:
+        logger.debug(f"Could not fetch Databricks secret '{key}': {e}")
+    return None
+
+
 def _get_sarvam_key() -> str:
-    return os.getenv("SARVAM_API_KEY", "")
+    """Resolve Sarvam API key with fallback chain:
+    1. Environment variable SARVAM_API_KEY
+    2. Databricks secret scope 'asha-sahayak', key 'sarvam_api_key'
+    """
+    # 1. Env var (also covers Databricks Apps injected config)
+    key = os.getenv("SARVAM_API_KEY", "")
+    if key:
+        return key
+
+    # 2. Databricks secret scope
+    secret = _get_databricks_secret("asha-sahayak", "sarvam_api_key")
+    if secret:
+        # Cache in env so subsequent calls are fast
+        os.environ["SARVAM_API_KEY"] = secret
+        return secret
+
+    return ""
 
 
 def _get_sarvam_client():
@@ -79,7 +119,9 @@ def _get_sarvam_client():
         return _sarvam_client
     key = _get_sarvam_key()
     if not key:
-        logger.warning("SARVAM_API_KEY not set — Sarvam providers will fail")
+        logger.warning("SARVAM_API_KEY not set — Sarvam providers will fail. "
+                       "Set env var SARVAM_API_KEY or add to Databricks secret "
+                       "scope 'asha-sahayak' with key 'sarvam_api_key'.")
         return None
     try:
         from sarvamai import SarvamAI
