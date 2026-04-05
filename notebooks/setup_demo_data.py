@@ -1,4 +1,8 @@
 # Databricks notebook source
+# /// script
+# [tool.databricks.environment]
+# environment_version = "2"
+# ///
 # MAGIC %md
 # MAGIC # ASHA Sahayak — Demo Data Setup
 # MAGIC This notebook sets up the complete demo environment:
@@ -37,6 +41,12 @@ sys.path.insert(0, "/Workspace/Repos/asha-sahayak")
 from pipelines.seed_demo_data import seed_all
 seed_all()
 print("Demo data seeded successfully!")
+
+# COMMAND ----------
+
+# DBTITLE 1,Upgrade Pydantic to v2
+# MAGIC %pip install --upgrade 'pydantic>=2.0'
+# MAGIC dbutils.library.restartPython()
 
 # COMMAND ----------
 
