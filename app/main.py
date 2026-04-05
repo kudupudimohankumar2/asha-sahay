@@ -12,6 +12,13 @@ from pathlib import Path
 ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT))
 
+# Detect port from Databricks or use default
+APP_PORT = int(os.environ.get('DATABRICKS_APP_PORT', 
+                               os.environ.get('GRADIO_SERVER_PORT', 
+                               os.environ.get('PORT', '8080'))))
+on_databricks = 'DATABRICKS_RUNTIME_VERSION' in os.environ
+
+
 try:
     from dotenv import load_dotenv
     env_path = ROOT / ".env"
@@ -156,13 +163,13 @@ else:
 if __name__ == "__main__":
     if USE_REACT:
         import uvicorn
-        uvicorn.run(app, host="0.0.0.0", port=8080, log_level="info")
+        uvicorn.run(app, host="0.0.0.0", port=APP_PORT, log_level="info")
     else:
         app.launch(
             server_name="0.0.0.0",
-            server_port=8080,
+            server_port=APP_PORT,
             show_error=True,
             quiet=False,
             prevent_thread_lock=False,
-            share=True,
+            share=not on_databricks,
         )

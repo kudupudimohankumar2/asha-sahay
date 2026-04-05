@@ -7,7 +7,7 @@ workspace:
 resources:
   apps:
     asha_sahayak:
-      name: "chitti-asha"
+      name: "asha-sahayak"
       description: "AI-powered multilingual maternal health assistant for ASHA workers"
       source_code_path: .
       config:
