@@ -2,18 +2,23 @@
 
 from datetime import date, datetime
 from typing import Optional, List, Dict, Any
-from pydantic import BaseModel, Field
+import json
+
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from .common import new_id, Modality, RiskBand
 
 
 class Observation(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+
     observation_id: str = Field(default_factory=new_id)
     patient_id: str
     obs_date: date = Field(default_factory=date.today)
     hemoglobin: Optional[float] = None
     systolic_bp: Optional[int] = None
     diastolic_bp: Optional[int] = None
+    cholesterol: Optional[float] = None
     blood_sugar_fasting: Optional[float] = None
     blood_sugar_pp: Optional[float] = None
     weight_kg: Optional[float] = None
@@ -26,11 +31,50 @@ class Observation(BaseModel):
     pallor: Optional[str] = None
     source_report_id: Optional[str] = None
     notes: str = ""
+    symptoms: List[str] = Field(default_factory=list)
+    next_visit_date: Optional[date] = None
+    voice_note_path: Optional[str] = None
+
+    @field_validator("obs_date", mode="before")
+    @classmethod
+    def _v_obs_date(cls, v):
+        if v is None or v == "":
+            return date.today()
+        if isinstance(v, date):
+            return v
+        return date.fromisoformat(str(v))
+
+    @field_validator("next_visit_date", mode="before")
+    @classmethod
+    def _v_next_visit(cls, v):
+        if v is None or v == "":
+            return None
+        if isinstance(v, date):
+            return v
+        return date.fromisoformat(str(v))
+
+    @field_validator("symptoms", mode="before")
+    @classmethod
+    def _v_symptoms(cls, v):
+        if v is None or v == "":
+            return []
+        if isinstance(v, list):
+            return [str(x) for x in v]
+        if isinstance(v, str):
+            try:
+                parsed = json.loads(v)
+                if isinstance(parsed, list):
+                    return [str(x) for x in parsed]
+            except json.JSONDecodeError:
+                pass
+            return [s.strip() for s in v.split(",") if s.strip()]
+        return []
 
 
 class Report(BaseModel):
     report_id: str = Field(default_factory=new_id)
     patient_id: str
+    observation_id: str = ""
     file_path: str = ""
     file_type: str = ""
     report_date: date = Field(default_factory=date.today)

@@ -335,7 +335,7 @@ class RiskService:
         )
         if not row:
             return None
-        return Observation(**{k: v for k, v in row.items() if k in Observation.model_fields})
+        return Observation.model_validate(dict(row))
 
     def evaluate_all_patients(self) -> List[RiskEvaluation]:
         """Batch re-evaluate all active patients."""

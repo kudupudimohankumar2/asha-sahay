@@ -3,6 +3,7 @@
 import json
 import logging
 from datetime import date, datetime
+from pathlib import Path
 from typing import Optional, Dict, Any
 
 from models.common import new_id
@@ -11,6 +12,9 @@ from providers.config import get_vision_provider
 from services.db import get_db
 
 logger = logging.getLogger(__name__)
+
+ROOT = Path(__file__).resolve().parent.parent
+UPLOAD_DIR = ROOT / "data" / "uploads"
 
 
 class DocumentService:
@@ -24,10 +28,16 @@ class DocumentService:
         file_bytes: bytes,
         file_type: str,
         file_name: str = "",
+        observation_id: str = "",
     ) -> Dict[str, Any]:
         """Process an uploaded document: extract, parse, store."""
         report_id = new_id()
-        file_path = f"uploads/{patient_id}/{report_id}_{file_name}"
+        safe_name = (file_name or "upload").replace("..", "").replace("/", "_")
+        UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+        dest = UPLOAD_DIR / patient_id / f"{report_id}_{safe_name}"
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        dest.write_bytes(file_bytes)
+        file_path = str(dest.relative_to(ROOT))
 
         if file_type in ("image/jpeg", "image/png", "image/jpg", "jpg", "png", "jpeg"):
             extraction = self.vision.extract_from_image(file_bytes)
@@ -42,6 +52,7 @@ class DocumentService:
         report = Report(
             report_id=report_id,
             patient_id=patient_id,
+            observation_id=observation_id or "",
             file_path=file_path,
             file_type=file_type,
             report_date=date.today(),
@@ -153,6 +164,7 @@ class DocumentService:
         self.db.insert("reports", {
             "report_id": report.report_id,
             "patient_id": report.patient_id,
+            "observation_id": getattr(report, "observation_id", "") or "",
             "file_path": report.file_path,
             "file_type": report.file_type,
             "report_date": report.report_date.isoformat(),
@@ -164,7 +176,7 @@ class DocumentService:
         })
 
     def _persist_observation(self, obs: Observation):
-        self.db.insert("observations", {
+        row = {
             "observation_id": obs.observation_id,
             "patient_id": obs.patient_id,
             "obs_date": obs.obs_date.isoformat(),
@@ -183,4 +195,13 @@ class DocumentService:
             "pallor": obs.pallor,
             "source_report_id": obs.source_report_id,
             "notes": obs.notes,
-        })
+        }
+        if obs.cholesterol is not None:
+            row["cholesterol"] = obs.cholesterol
+        if obs.symptoms:
+            row["symptoms"] = json.dumps(obs.symptoms)
+        if obs.next_visit_date:
+            row["next_visit_date"] = obs.next_visit_date.isoformat()
+        if obs.voice_note_path:
+            row["voice_note_path"] = obs.voice_note_path
+        self.db.insert("observations", row)

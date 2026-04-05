@@ -285,7 +285,7 @@ def _init_demo_tables(conn: sqlite3.Connection):
         details TEXT DEFAULT '{}'
     );
 
-    CREATE TABLE IF NOT EXISTS dashboard_snapshots (
+    CREATE TABLE IF NOT EXISTS     dashboard_snapshots (
         snapshot_id TEXT PRIMARY KEY,
         village TEXT,
         snapshot_date TEXT,
@@ -293,7 +293,54 @@ def _init_demo_tables(conn: sqlite3.Connection):
         data_json TEXT DEFAULT '{}'
     );
     """)
+    _migrate_schema(conn)
     conn.commit()
+
+
+def _table_columns(conn: sqlite3.Connection, table: str) -> set:
+    cur = conn.execute(f"PRAGMA table_info({table})")
+    rows = cur.fetchall()
+    if not rows:
+        return set()
+    if isinstance(rows[0], dict):
+        return {r["name"] for r in rows}
+    return {row[1] for row in rows}
+
+
+def _add_column_if_missing(conn: sqlite3.Connection, table: str, ddl: str) -> None:
+    col = ddl.strip().split()[0]
+    if col in _table_columns(conn, table):
+        return
+    conn.execute(f"ALTER TABLE {table} ADD COLUMN {ddl}")
+
+
+def _migrate_schema(conn: sqlite3.Connection) -> None:
+    """Add columns / tables introduced after initial demo schema."""
+    conn.execute(
+        """
+        CREATE TABLE IF NOT EXISTS app_users (
+            user_id TEXT PRIMARY KEY,
+            email TEXT UNIQUE NOT NULL,
+            username TEXT UNIQUE NOT NULL,
+            full_name TEXT NOT NULL,
+            phone TEXT DEFAULT '',
+            password_hash TEXT NOT NULL,
+            password_salt TEXT NOT NULL,
+            created_at TEXT
+        );
+        """
+    )
+    # Older DBs may have app_users from a partial schema; CREATE IF NOT EXISTS does not upgrade.
+    _add_column_if_missing(conn, "app_users", "password_salt TEXT DEFAULT ''")
+    _add_column_if_missing(conn, "app_users", "password_hash TEXT DEFAULT ''")
+    _add_column_if_missing(conn, "app_users", "phone TEXT DEFAULT ''")
+    _add_column_if_missing(conn, "app_users", "created_at TEXT")
+    _add_column_if_missing(conn, "patients", "husband_name TEXT DEFAULT ''")
+    _add_column_if_missing(conn, "observations", "cholesterol REAL")
+    _add_column_if_missing(conn, "observations", "symptoms TEXT DEFAULT '[]'")
+    _add_column_if_missing(conn, "observations", "next_visit_date TEXT")
+    _add_column_if_missing(conn, "observations", "voice_note_path TEXT DEFAULT ''")
+    _add_column_if_missing(conn, "reports", "observation_id TEXT DEFAULT ''")
 
 
 class DemoDB:

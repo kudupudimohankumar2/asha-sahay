@@ -7,7 +7,7 @@ from typing import List, Optional
 
 from models.patient import Patient, PatientSummary
 from models.common import (
-    new_id, RiskBand, compute_gestational_weeks,
+    new_id, RiskBand, Trimester, compute_gestational_weeks,
     compute_trimester, compute_edd,
 )
 from services.db import get_db
@@ -58,7 +58,7 @@ class PatientService:
         else:
             rows = self.db.fetch_all("SELECT * FROM patients ORDER BY risk_band, edd_date")
 
-        return [self._row_to_summary(r) for r in rows]
+        return self._summaries_with_next_visit(rows)
 
     def update_patient(self, patient_id: str, updates: dict) -> Optional[Patient]:
         if "known_conditions" in updates and isinstance(updates["known_conditions"], list):
@@ -87,10 +87,35 @@ class PatientService:
 
     def search_patients(self, query: str) -> List[PatientSummary]:
         rows = self.db.fetch_all(
-            "SELECT * FROM patients WHERE full_name LIKE ? OR village LIKE ? OR phone LIKE ?",
-            (f"%{query}%", f"%{query}%", f"%{query}%"),
+            """SELECT * FROM patients WHERE full_name LIKE ? OR village LIKE ? OR phone LIKE ?
+               OR IFNULL(husband_name, '') LIKE ?""",
+            (f"%{query}%", f"%{query}%", f"%{query}%", f"%{query}%"),
         )
-        return [self._row_to_summary(r) for r in rows]
+        return self._summaries_with_next_visit(rows)
+
+    def _next_visit_map(self, patient_ids: List[str]) -> dict:
+        if not patient_ids:
+            return {}
+        placeholders = ",".join(["?"] * len(patient_ids))
+        rows = self.db.fetch_all(
+            f"""SELECT patient_id, MIN(due_date) AS nd FROM schedules
+                WHERE patient_id IN ({placeholders}) AND status != 'completed'
+                GROUP BY patient_id""",
+            tuple(patient_ids),
+        )
+        out = {}
+        for r in rows:
+            if r.get("nd"):
+                try:
+                    out[r["patient_id"]] = date.fromisoformat(r["nd"])
+                except ValueError:
+                    pass
+        return out
+
+    def _summaries_with_next_visit(self, rows: List[dict]) -> List[PatientSummary]:
+        ids = [r["patient_id"] for r in rows]
+        nv = self._next_visit_map(ids)
+        return [self._row_to_summary(r, next_visit_date=nv.get(r["patient_id"])) for r in rows]
 
     def get_village_patients(self, village: str) -> List[Patient]:
         rows = self.db.fetch_all(
@@ -119,10 +144,24 @@ class PatientService:
             except json.JSONDecodeError:
                 meds = []
 
+        rb = row.get("risk_band", "NORMAL")
+        try:
+            rb_e = RiskBand(rb) if isinstance(rb, str) else rb
+        except ValueError:
+            rb_e = RiskBand.NORMAL
+        tri = row.get("trimester")
+        tri_e = None
+        if tri:
+            try:
+                tri_e = Trimester(tri)
+            except ValueError:
+                tri_e = None
+
         return Patient(
             patient_id=row["patient_id"],
             asha_worker_id=row.get("asha_worker_id", ""),
             full_name=row["full_name"],
+            husband_name=row.get("husband_name", "") or "",
             age=row["age"],
             village=row["village"],
             phone=row.get("phone", ""),
@@ -131,25 +170,39 @@ class PatientService:
             lmp_date=date.fromisoformat(row["lmp_date"]) if row.get("lmp_date") else None,
             edd_date=date.fromisoformat(row["edd_date"]) if row.get("edd_date") else None,
             gestational_weeks=row.get("gestational_weeks"),
-            trimester=row.get("trimester"),
+            trimester=tri_e,
             gravida=row.get("gravida", 1),
             parity=row.get("parity", 0),
             known_conditions=conditions,
             current_medications=meds,
             blood_group=row.get("blood_group", ""),
             height_cm=row.get("height_cm"),
-            risk_band=row.get("risk_band", "NORMAL"),
+            risk_band=rb_e,
             risk_score=row.get("risk_score", 0.0),
         )
 
-    def _row_to_summary(self, row: dict) -> PatientSummary:
+    def _row_to_summary(self, row: dict, next_visit_date: Optional[date] = None) -> PatientSummary:
+        rb = row.get("risk_band", "NORMAL")
+        try:
+            rb_e = RiskBand(rb) if isinstance(rb, str) else rb
+        except ValueError:
+            rb_e = RiskBand.NORMAL
+        tri = row.get("trimester")
+        tri_e = None
+        if tri:
+            try:
+                tri_e = Trimester(tri)
+            except ValueError:
+                tri_e = None
         return PatientSummary(
             patient_id=row["patient_id"],
             full_name=row["full_name"],
+            husband_name=row.get("husband_name", "") or "",
             age=row["age"],
             village=row["village"],
-            trimester=row.get("trimester"),
+            trimester=tri_e,
             gestational_weeks=row.get("gestational_weeks"),
-            risk_band=row.get("risk_band", "NORMAL"),
+            risk_band=rb_e,
             edd_date=date.fromisoformat(row["edd_date"]) if row.get("edd_date") else None,
+            next_visit_date=next_visit_date,
         )

@@ -39,6 +39,7 @@ export default function Patients() {
   function initialForm() {
     return {
       full_name: "",
+      husband_name: "",
       age: 25,
       village: "Hosahalli",
       phone: "",
@@ -73,6 +74,7 @@ export default function Patients() {
     try {
       const data = {
         ...formState,
+        husband_name: (formState.husband_name || "").trim(),
         age: Number(formState.age),
         gravida: Number(formState.gravida),
         parity: Number(formState.parity),
@@ -123,6 +125,10 @@ export default function Patients() {
               <div>
                 <label className="label">Full Name *</label>
                 <input className="input-field" value={formState.full_name} onChange={set("full_name")} placeholder="e.g., Lakshmi Devi" required />
+              </div>
+              <div>
+                <label className="label">Husband&apos;s name</label>
+                <input className="input-field" value={formState.husband_name} onChange={set("husband_name")} placeholder="Optional" />
               </div>
               <div>
                 <label className="label">Age *</label>
@@ -229,6 +235,9 @@ export default function Patients() {
               </div>
 
               <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-gray-500">
+                {p.husband_name && (
+                  <span className="text-gray-600">Spouse: {p.husband_name}</span>
+                )}
                 <span className="flex items-center gap-1">
                   <MapPin className="w-3 h-3" /> {p.village}
                 </span>

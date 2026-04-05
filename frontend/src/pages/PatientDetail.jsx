@@ -1,513 +1,520 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useParams, Link } from "react-router-dom";
 import {
   ArrowLeft,
-  Heart,
-  ShieldAlert,
   Calendar,
-  Apple,
-  FileText,
-  Upload,
-  Phone,
-  MapPin,
   Droplets,
-  Baby,
-  Clock,
-  CheckCircle2,
-  AlertCircle,
+  Activity,
+  Mic,
+  Image as ImageIcon,
   ChevronDown,
   ChevronUp,
+  Clock,
+  Stethoscope,
 } from "lucide-react";
 import { api } from "../api/client";
 import RiskBadge from "../components/RiskBadge";
 import LoadingSpinner from "../components/LoadingSpinner";
 
 const TABS = [
-  { id: "profile", icon: Heart, label: "Profile" },
-  { id: "risk", icon: ShieldAlert, label: "Risk" },
-  { id: "schedule", icon: Calendar, label: "Schedule" },
-  { id: "ration", icon: Apple, label: "Nutrition" },
-  { id: "reports", icon: FileText, label: "Reports" },
+  { id: "summary", label: "Summary & timeline" },
+  { id: "add", label: "Add health record" },
+  { id: "history", label: "Visit history" },
 ];
+
+function initials(name) {
+  if (!name?.trim()) return "?";
+  const p = name.trim().split(/\s+/);
+  return p.length === 1 ? p[0].slice(0, 2).toUpperCase() : (p[0][0] + p[p.length - 1][0]).toUpperCase();
+}
+
+function parseSymptoms(row) {
+  const s = row.symptoms;
+  if (!s) return [];
+  if (Array.isArray(s)) return s;
+  try {
+    const j = JSON.parse(s);
+    return Array.isArray(j) ? j : [];
+  } catch {
+    return String(s)
+      .split(",")
+      .map((x) => x.trim())
+      .filter(Boolean);
+  }
+}
 
 export default function PatientDetail() {
   const { patientId } = useParams();
   const [patient, setPatient] = useState(null);
   const [risk, setRisk] = useState(null);
   const [schedule, setSchedule] = useState([]);
-  const [ration, setRation] = useState(null);
   const [observations, setObservations] = useState([]);
+  const [reports, setReports] = useState([]);
+  const [clinicalSummary, setClinicalSummary] = useState("");
   const [loading, setLoading] = useState(true);
-  const [tab, setTab] = useState("profile");
-  const [uploading, setUploading] = useState(false);
-  const [uploadResult, setUploadResult] = useState(null);
+  const [tab, setTab] = useState("summary");
 
-  useEffect(() => {
+  const [form, setForm] = useState({
+    obs_date: new Date().toISOString().slice(0, 10),
+    systolic_bp: "",
+    diastolic_bp: "",
+    cholesterol: "",
+    weight_kg: "",
+    hemoglobin: "",
+    symptoms: "",
+    next_visit_date: "",
+    notes: "",
+  });
+  const [voiceFile, setVoiceFile] = useState(null);
+  const [pathologyFiles, setPathologyFiles] = useState([]);
+  const [saving, setSaving] = useState(false);
+  const [saveMsg, setSaveMsg] = useState(null);
+  const [expanded, setExpanded] = useState({});
+
+  const load = () => {
     setLoading(true);
     Promise.all([
       api.getPatient(patientId),
       api.getPatientRisk(patientId),
       api.getPatientSchedule(patientId),
-      api.getPatientRation(patientId),
       api.getPatientObservations(patientId),
+      api.getPatientReports(patientId),
+      api.getClinicalSummary(patientId).catch(() => ({ summary: "" })),
     ])
-      .then(([p, r, s, ra, o]) => {
+      .then(([p, r, s, o, rep, cs]) => {
         setPatient(p);
         setRisk(r);
         setSchedule(s);
-        setRation(ra);
         setObservations(o);
+        setReports(rep);
+        setClinicalSummary(cs.summary || "");
       })
       .catch(console.error)
       .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    load();
   }, [patientId]);
 
-  const handleUpload = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setUploading(true);
-    setUploadResult(null);
+  const metrics = useMemo(() => {
+    const obs = observations[0];
+    const nextSched = [...(schedule || [])]
+      .filter((x) => x.status !== "completed")
+      .sort((a, b) => String(a.due_date).localeCompare(String(b.due_date)))[0];
+    const lastSched = [...(schedule || [])]
+      .filter((x) => x.status === "completed")
+      .sort((a, b) => String(b.due_date).localeCompare(String(a.due_date)))[0];
+    return {
+      lastVisit: obs?.obs_date || lastSched?.due_date || "—",
+      nextVisit: nextSched?.due_date || obs?.next_visit_date || "—",
+      bp:
+        obs?.systolic_bp && obs?.diastolic_bp
+          ? `${obs.systolic_bp}/${obs.diastolic_bp}`
+          : "—",
+      hb: obs?.hemoglobin != null ? `${obs.hemoglobin}` : "—",
+    };
+  }, [observations, schedule]);
+
+  const pregLabel = useMemo(() => {
+    if (!patient) return "—";
+    const w = patient.gestational_weeks;
+    if (w == null) return "—";
+    const mo = Math.floor(w / 4);
+    const wr = w % 4;
+    return mo > 0 ? `${mo} months ${wr} w` : `${w} weeks`;
+  }, [patient]);
+
+  const handleSubmitRecord = async (e) => {
+    e.preventDefault();
+    setSaving(true);
+    setSaveMsg(null);
     try {
-      const result = await api.uploadDocument(patientId, file);
-      setUploadResult(result);
+      const payload = {
+        obs_date: form.obs_date || undefined,
+        systolic_bp: form.systolic_bp ? Number(form.systolic_bp) : undefined,
+        diastolic_bp: form.diastolic_bp ? Number(form.diastolic_bp) : undefined,
+        cholesterol: form.cholesterol ? Number(form.cholesterol) : undefined,
+        weight_kg: form.weight_kg ? Number(form.weight_kg) : undefined,
+        hemoglobin: form.hemoglobin ? Number(form.hemoglobin) : undefined,
+        symptoms: form.symptoms,
+        next_visit_date: form.next_visit_date || undefined,
+        notes: form.notes,
+      };
+      await api.createObservation(patientId, payload, voiceFile, pathologyFiles);
+      setSaveMsg({ type: "ok", text: "Visit saved." });
+      setVoiceFile(null);
+      setPathologyFiles([]);
+      setForm((f) => ({
+        ...f,
+        symptoms: "",
+        notes: "",
+      }));
+      load();
     } catch (err) {
-      setUploadResult({ error: err.message });
+      setSaveMsg({ type: "err", text: err.message });
     } finally {
-      setUploading(false);
+      setSaving(false);
     }
   };
 
-  if (loading) return <LoadingSpinner message="Loading patient details..." />;
-  if (!patient) return <div className="text-center py-16 text-gray-500">Patient not found</div>;
+  const toggleEx = (id) => setExpanded((x) => ({ ...x, [id]: !x[id] }));
+
+  if (loading) return <LoadingSpinner message="Loading patient…" />;
+  if (!patient) return <div className="text-center py-16 text-stone-500">Patient not found</div>;
+
+  const reportsByObs = {};
+  for (const r of reports || []) {
+    const oid = r.observation_id;
+    if (!oid) continue;
+    if (!reportsByObs[oid]) reportsByObs[oid] = [];
+    reportsByObs[oid].push(r);
+  }
 
   return (
-    <div className="space-y-6 animate-fade-in">
-      {/* Back + Header */}
-      <div className="flex items-center gap-3">
-        <Link to="/patients" className="p-2 rounded-lg hover:bg-gray-100 transition-colors">
-          <ArrowLeft className="w-5 h-5 text-gray-500" />
+    <div className="space-y-6 animate-fade-in max-w-5xl mx-auto">
+      <div className="flex items-start gap-4">
+        <Link to="/patients" className="p-2 rounded-xl hover:bg-stone-100 mt-1">
+          <ArrowLeft className="w-5 h-5 text-stone-500" />
         </Link>
-        <div className="flex-1">
-          <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold text-gray-900">{patient.full_name}</h1>
-            <RiskBadge risk={patient.risk_band} size="lg" />
+        <div className="flex-1 rounded-2xl bg-gradient-to-r from-emerald-800 to-emerald-900 text-white p-6 shadow-lg">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+            <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center text-2xl font-display font-semibold">
+              {initials(patient.full_name)}
+            </div>
+            <div className="flex-1">
+              <div className="flex flex-wrap items-center gap-3">
+                <h1 className="font-display text-2xl sm:text-3xl">{patient.full_name}</h1>
+                <RiskBadge risk={patient.risk_band} size="lg" />
+              </div>
+              <p className="text-emerald-100/90 mt-1 text-sm">
+                Age {patient.age}
+                {patient.husband_name ? ` · Spouse: ${patient.husband_name}` : ""} · {patient.village}
+              </p>
+              <p className="text-emerald-200/80 text-sm mt-2">
+                Pregnancy: <span className="text-white font-medium">{pregLabel}</span>
+                {patient.trimester ? ` · ${patient.trimester} trimester` : ""}
+              </p>
+            </div>
           </div>
-          <p className="text-sm text-gray-500 mt-0.5">{patient.village} &middot; Age {patient.age}</p>
         </div>
-        {risk?.emergency_flag && (
-          <div className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-lg bg-red-100 border border-red-200">
-            <AlertCircle className="w-4 h-4 text-red-600" />
-            <span className="text-sm font-semibold text-red-700">Emergency</span>
-          </div>
-        )}
       </div>
 
-      {/* Quick stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <QuickStat icon={Calendar} label="EDD" value={patient.edd_date || "—"} />
-        <QuickStat icon={Clock} label="Gestational Age" value={patient.gestational_weeks ? `${patient.gestational_weeks} weeks` : "—"} />
-        <QuickStat icon={Baby} label="Trimester" value={patient.trimester || "—"} />
-        <QuickStat icon={Droplets} label="Blood Group" value={patient.blood_group || "—"} />
-      </div>
-
-      {/* Tabs */}
-      <div className="border-b border-gray-200 -mx-4 lg:-mx-8 px-4 lg:px-8">
-        <nav className="flex gap-1 overflow-x-auto">
-          {TABS.map(({ id, icon: Icon, label }) => (
+      <div className="border-b border-stone-200">
+        <nav className="flex gap-1 overflow-x-auto pb-px">
+          {TABS.map(({ id, label }) => (
             <button
               key={id}
+              type="button"
               onClick={() => setTab(id)}
-              className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
+              className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap font-sans ${
                 tab === id
-                  ? "border-primary-600 text-primary-700"
-                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                  ? "border-emerald-600 text-emerald-800"
+                  : "border-transparent text-stone-500 hover:text-stone-800"
               }`}
             >
-              <Icon className="w-4 h-4" />
               {label}
             </button>
           ))}
         </nav>
       </div>
 
-      {/* Tab content */}
-      <div className="animate-fade-in">
-        {tab === "profile" && <ProfileTab patient={patient} observations={observations} />}
-        {tab === "risk" && <RiskTab risk={risk} />}
-        {tab === "schedule" && <ScheduleTab schedule={schedule} />}
-        {tab === "ration" && <RationTab ration={ration} />}
-        {tab === "reports" && (
-          <ReportsTab
-            uploading={uploading}
-            uploadResult={uploadResult}
-            onUpload={handleUpload}
-          />
-        )}
-      </div>
-    </div>
-  );
-}
-
-function QuickStat({ icon: Icon, label, value }) {
-  return (
-    <div className="flex items-center gap-3 p-3 rounded-xl bg-white border border-gray-200">
-      <Icon className="w-5 h-5 text-gray-400 shrink-0" />
-      <div className="min-w-0">
-        <p className="text-xs text-gray-500">{label}</p>
-        <p className="text-sm font-semibold text-gray-900 truncate">{value}</p>
-      </div>
-    </div>
-  );
-}
-
-
-function ProfileTab({ patient, observations }) {
-  const fields = [
-    ["Phone", patient.phone || "—", Phone],
-    ["Village", patient.village, MapPin],
-    ["Language", patient.language_preference?.toUpperCase()],
-    ["Gravida", patient.gravida],
-    ["Parity", patient.parity],
-    ["LMP Date", patient.lmp_date || "—"],
-    ["EDD", patient.edd_date || "—"],
-    ["Risk Score", patient.risk_score?.toFixed(0) + "/100"],
-  ];
-
-  return (
-    <div className="space-y-6">
-      <div className="card">
-        <h3 className="text-base font-semibold text-gray-900 mb-4">Patient Information</h3>
-        <dl className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          {fields.map(([label, val]) => (
-            <div key={label}>
-              <dt className="text-xs text-gray-500">{label}</dt>
-              <dd className="text-sm font-medium text-gray-900 mt-0.5">{val}</dd>
-            </div>
-          ))}
-        </dl>
-      </div>
-
-      {patient.known_conditions?.length > 0 && (
-        <div className="card">
-          <h3 className="text-base font-semibold text-gray-900 mb-3">Known Conditions</h3>
-          <div className="flex flex-wrap gap-2">
-            {patient.known_conditions.map((c, i) => (
-              <span key={i} className="px-3 py-1 rounded-full bg-amber-50 text-amber-700 text-sm border border-amber-200">
-                {c}
-              </span>
-            ))}
+      {tab === "summary" && (
+        <div className="space-y-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+            <Metric icon={Calendar} label="Last visit / record" value={metrics.lastVisit} />
+            <Metric icon={Clock} label="Next visit" value={metrics.nextVisit} />
+            <Metric icon={Activity} label="Latest BP (mmHg)" value={metrics.bp} />
+            <Metric icon={Droplets} label="Latest Hb (g/dL)" value={metrics.hb} />
           </div>
-        </div>
-      )}
 
-      {patient.current_medications?.length > 0 && (
-        <div className="card">
-          <h3 className="text-base font-semibold text-gray-900 mb-3">Current Medications</h3>
-          <div className="flex flex-wrap gap-2">
-            {patient.current_medications.map((m, i) => (
-              <span key={i} className="px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-sm border border-blue-200">
-                {m}
-              </span>
-            ))}
+          <div className="card border-l-4 border-emerald-500 bg-emerald-50/30">
+            <h3 className="text-sm font-semibold text-emerald-900 flex items-center gap-2 mb-2">
+              <Stethoscope className="w-4 h-4" />
+              AI clinical summary
+            </h3>
+            <p className="text-stone-700 text-sm leading-relaxed whitespace-pre-wrap">
+              {clinicalSummary || "Generating summary…"}
+            </p>
           </div>
-        </div>
-      )}
 
-      {observations.length > 0 && (
-        <div className="card">
-          <h3 className="text-base font-semibold text-gray-900 mb-4">Latest Observations</h3>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="text-left text-xs text-gray-500 border-b border-gray-100">
-                  <th className="pb-2 pr-4">Date</th>
-                  <th className="pb-2 pr-4">Hb (g/dL)</th>
-                  <th className="pb-2 pr-4">BP (mmHg)</th>
-                  <th className="pb-2 pr-4">Weight (kg)</th>
-                  <th className="pb-2 pr-4">Fetal Movement</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-50">
-                {observations.slice(0, 5).map((o, i) => (
-                  <tr key={i} className="text-gray-700">
-                    <td className="py-2 pr-4 font-medium">{o.obs_date || "—"}</td>
-                    <td className="py-2 pr-4">{o.hemoglobin ?? "—"}</td>
-                    <td className="py-2 pr-4">{o.systolic_bp && o.diastolic_bp ? `${o.systolic_bp}/${o.diastolic_bp}` : "—"}</td>
-                    <td className="py-2 pr-4">{o.weight_kg ?? "—"}</td>
-                    <td className="py-2 pr-4">{o.fetal_movement || "—"}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-
-function RiskTab({ risk }) {
-  if (!risk) return <p className="text-gray-500">No risk data available</p>;
-
-  return (
-    <div className="space-y-6">
-      {/* Risk summary */}
-      <div className="card">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-base font-semibold text-gray-900">Risk Assessment</h3>
-          <RiskBadge risk={risk.risk_band} size="lg" />
-        </div>
-        <div className="flex items-center gap-6">
-          <div>
-            <p className="text-3xl font-bold text-gray-900">{risk.risk_score?.toFixed(0)}</p>
-            <p className="text-xs text-gray-500">Risk Score (0-100)</p>
-          </div>
-          <div className="flex-1">
-            <div className="h-3 rounded-full bg-gray-100 overflow-hidden">
-              <div
-                className={`h-full rounded-full transition-all ${
-                  risk.risk_score > 70 ? "bg-red-500" : risk.risk_score > 40 ? "bg-amber-500" : "bg-emerald-500"
-                }`}
-                style={{ width: `${Math.min(risk.risk_score, 100)}%` }}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Emergency banner */}
-      {risk.emergency_flag && (
-        <div className="p-4 rounded-xl bg-red-50 border-2 border-red-200">
-          <div className="flex items-center gap-2 mb-2">
-            <AlertCircle className="w-5 h-5 text-red-600" />
-            <h4 className="text-base font-bold text-red-700">Emergency Action Required</h4>
-          </div>
-          <p className="text-sm text-red-700">{risk.suggested_next_action}</p>
-        </div>
-      )}
-
-      {/* Triggered rules */}
-      {risk.triggered_rules?.length > 0 ? (
-        <div className="card">
-          <h3 className="text-base font-semibold text-gray-900 mb-4">Triggered Rules ({risk.triggered_rules.length})</h3>
-          <div className="space-y-3">
-            {risk.triggered_rules.map((rule, i) => {
-              const sevColor = rule.severity === "EMERGENCY" ? "border-red-400 bg-red-50" :
-                rule.severity === "HIGH_RISK" ? "border-orange-400 bg-orange-50" :
-                "border-amber-300 bg-amber-50";
-              return (
-                <div key={i} className={`p-4 rounded-lg border-l-4 ${sevColor}`}>
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <h4 className="text-sm font-semibold text-gray-900">{rule.name}</h4>
-                      <p className="text-xs text-gray-600 mt-1">{rule.details}</p>
-                    </div>
-                    <span className="text-xs font-medium text-gray-500">{rule.severity}</span>
+          <div className="card">
+            <h3 className="font-display text-lg text-stone-900 mb-4">Visit timeline</h3>
+            <div className="space-y-4">
+              {observations.length === 0 && schedule.length === 0 && (
+                <p className="text-stone-500 text-sm">No visits recorded yet.</p>
+              )}
+              {observations.map((o, i) => (
+                <div key={o.observation_id || i} className="flex gap-4">
+                  <div className="flex flex-col items-center">
+                    <div className="w-3 h-3 rounded-full bg-emerald-500 ring-4 ring-emerald-100" />
+                    {i < observations.length - 1 && <div className="w-0.5 flex-1 bg-stone-200 min-h-[2rem]" />}
                   </div>
-                  <p className="text-xs text-gray-500 mt-2">Action: {rule.action}</p>
-                  {rule.source_ref && (
-                    <p className="text-xs text-gray-400 mt-1">Source: {rule.source_ref}</p>
-                  )}
+                  <div className="flex-1 pb-6">
+                    <p className="text-sm font-semibold text-stone-900">{o.obs_date}</p>
+                    <p className="text-xs text-stone-600 mt-1">
+                      BP:{" "}
+                      {o.systolic_bp && o.diastolic_bp
+                        ? `${o.systolic_bp}/${o.diastolic_bp}`
+                        : "—"}{" "}
+                      · Hb: {o.hemoglobin ?? "—"} · Wt: {o.weight_kg ?? "—"} kg
+                      {o.cholesterol != null ? ` · Chol: ${o.cholesterol}` : ""}
+                    </p>
+                    {parseSymptoms(o).length > 0 && (
+                      <p className="text-xs text-stone-500 mt-1">
+                        Symptoms: {parseSymptoms(o).join(", ")}
+                      </p>
+                    )}
+                  </div>
                 </div>
-              );
-            })}
-          </div>
-        </div>
-      ) : (
-        <div className="card text-center py-8">
-          <CheckCircle2 className="w-10 h-10 text-emerald-500 mx-auto mb-2" />
-          <p className="text-sm text-emerald-700 font-medium">No risk flags detected</p>
-          <p className="text-xs text-gray-500 mt-1">Continue routine care</p>
-        </div>
-      )}
-    </div>
-  );
-}
-
-
-function ScheduleTab({ schedule }) {
-  if (!schedule?.length)
-    return <p className="text-sm text-gray-500 text-center py-8">No schedule generated yet</p>;
-
-  const statusIcon = (s) => {
-    if (s === "completed") return <CheckCircle2 className="w-4 h-4 text-emerald-500" />;
-    if (s === "overdue") return <AlertCircle className="w-4 h-4 text-red-500" />;
-    return <Clock className="w-4 h-4 text-blue-500" />;
-  };
-
-  return (
-    <div className="card">
-      <h3 className="text-base font-semibold text-gray-900 mb-4">ANC Schedule</h3>
-      <div className="space-y-3">
-        {schedule.map((entry, i) => (
-          <div
-            key={i}
-            className={`flex items-start gap-3 p-4 rounded-lg border transition-colors ${
-              entry.status === "overdue"
-                ? "border-red-200 bg-red-50/50"
-                : entry.status === "completed"
-                ? "border-emerald-200 bg-emerald-50/50"
-                : "border-gray-200 bg-gray-50/50"
-            }`}
-          >
-            <div className="mt-0.5">{statusIcon(entry.status)}</div>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 flex-wrap">
-                <h4 className="text-sm font-semibold text-gray-900">{entry.visit_type}</h4>
-                {entry.is_pmsma_aligned && (
-                  <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">PMSMA</span>
-                )}
-                {entry.escalation_flag && (
-                  <span className="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full">Escalation</span>
-                )}
-              </div>
-              <p className="text-xs text-gray-500 mt-1">Due: {entry.due_date} &middot; Status: {entry.status}</p>
-              {entry.tests_due?.length > 0 && (
-                <p className="text-xs text-gray-400 mt-1">Tests: {entry.tests_due.join(", ")}</p>
-              )}
+              ))}
             </div>
           </div>
-        ))}
-      </div>
-    </div>
-  );
-}
 
-
-function RationTab({ ration }) {
-  if (!ration) return <p className="text-sm text-gray-500 text-center py-8">No ration data available</p>;
-
-  return (
-    <div className="space-y-6">
-      <div className="card">
-        <h3 className="text-base font-semibold text-gray-900 mb-4">Weekly Nutrition Recommendation</h3>
-        <div className="grid grid-cols-3 gap-4 mb-6">
-          <div className="text-center p-3 rounded-xl bg-primary-50">
-            <p className="text-xl font-bold text-primary-700">{ration.calorie_target}</p>
-            <p className="text-xs text-primary-600">cal/day</p>
-          </div>
-          <div className="text-center p-3 rounded-xl bg-blue-50">
-            <p className="text-xl font-bold text-blue-700">{ration.protein_target_g}g</p>
-            <p className="text-xs text-blue-600">protein/day</p>
-          </div>
-          <div className="text-center p-3 rounded-xl bg-gray-50">
-            <p className="text-xl font-bold text-gray-700">{ration.week_start}</p>
-            <p className="text-xs text-gray-500">week start</p>
-          </div>
-        </div>
-
-        {ration.ration_items?.length > 0 && (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="text-left text-xs text-gray-500 border-b border-gray-100">
-                  <th className="pb-2 pr-4">Item</th>
-                  <th className="pb-2 pr-4">Quantity</th>
-                  <th className="pb-2 pr-4">Frequency</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-50">
-                {ration.ration_items.map((item, i) => (
-                  <tr key={i} className="text-gray-700">
-                    <td className="py-2.5 pr-4 font-medium">{item.item_name}</td>
-                    <td className="py-2.5 pr-4">{item.quantity} {item.unit}</td>
-                    <td className="py-2.5 pr-4">{item.frequency}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
-
-      {ration.supplements?.length > 0 && (
-        <div className="card">
-          <h3 className="text-base font-semibold text-gray-900 mb-3">Supplements</h3>
-          <div className="flex flex-wrap gap-2">
-            {ration.supplements.map((s, i) => (
-              <span key={i} className="px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-700 text-sm border border-emerald-200">
-                {s}
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {ration.special_adjustments?.length > 0 && (
-        <div className="card">
-          <h3 className="text-base font-semibold text-gray-900 mb-3">Special Adjustments</h3>
-          <ul className="space-y-2">
-            {ration.special_adjustments.map((a, i) => (
-              <li key={i} className="flex items-start gap-2 text-sm text-gray-700">
-                <span className="w-1.5 h-1.5 rounded-full bg-amber-400 mt-1.5 shrink-0" />
-                {a}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      {ration.rule_basis?.length > 0 && (
-        <div className="card bg-gray-50">
-          <h3 className="text-sm font-semibold text-gray-700 mb-2">Rule Basis</h3>
-          <p className="text-xs text-gray-500">{ration.rule_basis.join(" | ")}</p>
-        </div>
-      )}
-    </div>
-  );
-}
-
-
-function ReportsTab({ uploading, uploadResult, onUpload }) {
-  return (
-    <div className="space-y-6">
-      <div className="card">
-        <h3 className="text-base font-semibold text-gray-900 mb-4">Upload Report</h3>
-        <label className={`flex flex-col items-center justify-center w-full h-40 border-2 border-dashed rounded-xl cursor-pointer transition-colors ${
-          uploading ? "border-primary-300 bg-primary-50" : "border-gray-300 bg-gray-50 hover:border-primary-400 hover:bg-primary-50"
-        }`}>
-          <Upload className={`w-8 h-8 mb-2 ${uploading ? "text-primary-500 animate-pulse" : "text-gray-400"}`} />
-          <span className="text-sm text-gray-600">
-            {uploading ? "Processing..." : "Click to upload PDF or image"}
-          </span>
-          <span className="text-xs text-gray-400 mt-1">PDF, JPG, PNG supported</span>
-          <input type="file" className="hidden" accept=".pdf,.jpg,.jpeg,.png" onChange={onUpload} disabled={uploading} />
-        </label>
-      </div>
-
-      {uploadResult && (
-        <div className={`card ${uploadResult.error ? "border-red-200" : "border-emerald-200"}`}>
-          {uploadResult.error ? (
-            <p className="text-sm text-red-700">{uploadResult.error}</p>
-          ) : (
-            <>
-              <h3 className="text-base font-semibold text-gray-900 mb-2">
-                Report Processed ({((uploadResult.confidence || 0) * 100).toFixed(0)}% confidence)
-              </h3>
-              {uploadResult.abnormality_flags?.length > 0 && (
-                <div className="space-y-1 mb-3">
-                  {uploadResult.abnormality_flags.map((flag, i) => (
-                    <div key={i} className="flex items-center gap-2 text-sm text-red-700">
-                      <AlertCircle className="w-4 h-4" /> {flag}
-                    </div>
-                  ))}
-                </div>
-              )}
-              {uploadResult.extraction?.findings && (
-                <div className="grid grid-cols-2 gap-2">
-                  {Object.entries(uploadResult.extraction.findings).map(([k, v]) => (
-                    <div key={k} className="p-2 rounded-lg bg-gray-50">
-                      <p className="text-xs text-gray-500">{k}</p>
-                      <p className="text-sm font-medium text-gray-900">{v}</p>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </>
+          {risk && (
+            <div className="card bg-stone-50">
+              <h3 className="text-sm font-semibold text-stone-800 mb-2">Risk snapshot</h3>
+              <div className="flex items-center gap-3">
+                <RiskBadge risk={risk.risk_band} size="lg" />
+                <span className="text-sm text-stone-600">Score {risk.risk_score?.toFixed(0) ?? "—"}/100</span>
+              </div>
+            </div>
           )}
         </div>
       )}
+
+      {tab === "add" && (
+        <form onSubmit={handleSubmitRecord} className="card space-y-4 max-w-2xl">
+          <h3 className="font-display text-lg text-stone-900">Record a visit</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="label">Visit date</label>
+              <input
+                className="input-field"
+                type="date"
+                value={form.obs_date}
+                onChange={(e) => setForm((f) => ({ ...f, obs_date: e.target.value }))}
+              />
+            </div>
+            <div>
+              <label className="label">Next visit date</label>
+              <input
+                className="input-field"
+                type="date"
+                value={form.next_visit_date}
+                onChange={(e) => setForm((f) => ({ ...f, next_visit_date: e.target.value }))}
+              />
+            </div>
+            <div>
+              <label className="label">Systolic BP</label>
+              <input
+                className="input-field"
+                type="number"
+                value={form.systolic_bp}
+                onChange={(e) => setForm((f) => ({ ...f, systolic_bp: e.target.value }))}
+              />
+            </div>
+            <div>
+              <label className="label">Diastolic BP</label>
+              <input
+                className="input-field"
+                type="number"
+                value={form.diastolic_bp}
+                onChange={(e) => setForm((f) => ({ ...f, diastolic_bp: e.target.value }))}
+              />
+            </div>
+            <div>
+              <label className="label">Cholesterol (mg/dL)</label>
+              <input
+                className="input-field"
+                type="number"
+                step="0.1"
+                value={form.cholesterol}
+                onChange={(e) => setForm((f) => ({ ...f, cholesterol: e.target.value }))}
+              />
+            </div>
+            <div>
+              <label className="label">Weight (kg)</label>
+              <input
+                className="input-field"
+                type="number"
+                step="0.1"
+                value={form.weight_kg}
+                onChange={(e) => setForm((f) => ({ ...f, weight_kg: e.target.value }))}
+              />
+            </div>
+            <div>
+              <label className="label">Hemoglobin (g/dL)</label>
+              <input
+                className="input-field"
+                type="number"
+                step="0.1"
+                value={form.hemoglobin}
+                onChange={(e) => setForm((f) => ({ ...f, hemoglobin: e.target.value }))}
+              />
+            </div>
+            <div className="sm:col-span-2">
+              <label className="label">Symptoms (comma-separated)</label>
+              <input
+                className="input-field"
+                value={form.symptoms}
+                onChange={(e) => setForm((f) => ({ ...f, symptoms: e.target.value }))}
+                placeholder="headache, nausea…"
+              />
+            </div>
+            <div className="sm:col-span-2">
+              <label className="label">Notes</label>
+              <textarea
+                className="input-field min-h-[80px]"
+                value={form.notes}
+                onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))}
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="label flex items-center gap-2">
+                <Mic className="w-4 h-4" />
+                Voice note
+              </label>
+              <input
+                type="file"
+                accept="audio/*,.webm,.wav,.mp3"
+                className="text-sm text-stone-600"
+                onChange={(e) => setVoiceFile(e.target.files?.[0] || null)}
+              />
+            </div>
+            <div>
+              <label className="label flex items-center gap-2">
+                <ImageIcon className="w-4 h-4" />
+                Pathology reports (images/PDF)
+              </label>
+              <input
+                type="file"
+                accept=".pdf,.jpg,.jpeg,.png"
+                multiple
+                className="text-sm text-stone-600"
+                onChange={(e) => setPathologyFiles(Array.from(e.target.files || []))}
+              />
+            </div>
+          </div>
+
+          {saveMsg && (
+            <p
+              className={`text-sm px-3 py-2 rounded-lg ${
+                saveMsg.type === "ok"
+                  ? "bg-emerald-50 text-emerald-800 border border-emerald-200"
+                  : "bg-red-50 text-red-700 border border-red-200"
+              }`}
+            >
+              {saveMsg.text}
+            </p>
+          )}
+
+          <button type="submit" className="btn-primary" disabled={saving}>
+            {saving ? "Saving…" : "Save visit"}
+          </button>
+        </form>
+      )}
+
+      {tab === "history" && (
+        <div className="card overflow-hidden p-0">
+          <div className="px-6 py-4 border-b border-stone-100 bg-stone-50">
+            <h3 className="font-display text-lg text-stone-900">All visit records</h3>
+          </div>
+          <div className="divide-y divide-stone-100">
+            {observations.length === 0 ? (
+              <p className="p-8 text-center text-stone-500 text-sm">No visits yet.</p>
+            ) : (
+              observations.map((o) => {
+                const oid = o.observation_id;
+                const open = expanded[oid];
+                const reps = reportsByObs[oid] || [];
+                const hasVoice = !!o.voice_note_path;
+                return (
+                  <div key={oid} className="bg-white">
+                    <button
+                      type="button"
+                      className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-stone-50"
+                      onClick={() => toggleEx(oid)}
+                    >
+                      <div>
+                        <p className="text-sm font-semibold text-stone-900">{o.obs_date}</p>
+                        <p className="text-xs text-stone-500">
+                          BP {o.systolic_bp}/{o.diastolic_bp} · Hb {o.hemoglobin ?? "—"} · Wt {o.weight_kg ?? "—"}
+                        </p>
+                      </div>
+                      {open ? <ChevronUp className="w-5 h-5 text-stone-400" /> : <ChevronDown className="w-5 h-5 text-stone-400" />}
+                    </button>
+                    {open && (
+                      <div className="px-4 pb-4 pl-8 space-y-4 border-t border-stone-100 bg-stone-50/50">
+                        {parseSymptoms(o).length > 0 && (
+                          <p className="text-sm text-stone-700">
+                            <span className="font-medium">Symptoms:</span> {parseSymptoms(o).join(", ")}
+                          </p>
+                        )}
+                        {hasVoice && (
+                          <div>
+                            <p className="text-xs font-medium text-stone-600 mb-1">Voice note</p>
+                            <audio
+                              controls
+                              className="w-full max-w-md"
+                              src={`/api/patients/${patientId}/observations/${oid}/voice`}
+                            >
+                              <track kind="captions" />
+                            </audio>
+                          </div>
+                        )}
+                        {reps.length > 0 && (
+                          <div>
+                            <p className="text-xs font-medium text-stone-600 mb-2">Pathology / reports</p>
+                            <div className="flex flex-wrap gap-3">
+                              {reps.map((r) => (
+                                <a
+                                  key={r.report_id}
+                                  href={api.reportMediaUrl(patientId, r.report_id)}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="block rounded-lg border border-stone-200 overflow-hidden w-32 h-32 bg-stone-100 hover:ring-2 ring-emerald-400"
+                                >
+                                  {String(r.file_type || "").includes("pdf") ? (
+                                    <div className="w-full h-full flex items-center justify-center text-xs text-stone-500 p-2">
+                                      PDF
+                                    </div>
+                                  ) : (
+                                    <img
+                                      src={api.reportMediaUrl(patientId, r.report_id)}
+                                      alt="Report"
+                                      className="w-full h-full object-cover"
+                                    />
+                                  )}
+                                </a>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                );
+              })
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function Metric({ icon: Icon, label, value }) {
+  return (
+    <div className="rounded-xl border border-stone-200 bg-white p-4 flex items-start gap-3 shadow-sm">
+      <Icon className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
+      <div>
+        <p className="text-xs text-stone-500 uppercase tracking-wide">{label}</p>
+        <p className="text-sm font-semibold text-stone-900 mt-0.5">{value}</p>
+      </div>
     </div>
   );
 }

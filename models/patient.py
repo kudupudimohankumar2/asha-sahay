@@ -14,6 +14,7 @@ class Patient(BaseModel):
     patient_id: str = Field(default_factory=new_id)
     asha_worker_id: str = ""
     full_name: str
+    husband_name: str = ""
     age: int
     village: str
     phone: str = ""
@@ -52,6 +53,7 @@ class PatientSummary(BaseModel):
     """Lightweight view for list pages."""
     patient_id: str
     full_name: str
+    husband_name: str = ""
     age: int
     village: str
     trimester: Optional[Trimester] = None
