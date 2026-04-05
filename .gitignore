@@ -41,6 +41,10 @@ htmlcov/
 .coverage
 coverage.xml
 
+# === Frontend build tooling (built assets in app/static/ ARE tracked) ===
+frontend/node_modules/
+frontend/.vite/
+
 # === Databricks ===
 .databricks/
 *.whl

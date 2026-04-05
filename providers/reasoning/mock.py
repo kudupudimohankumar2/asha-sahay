@@ -74,12 +74,18 @@ class MockReasoningProvider(ReasoningProvider):
         temperature: float = 0.3,
         max_tokens: int = 1024,
     ) -> ProviderResponse:
-        lower = prompt.lower()
+        query_line = ""
+        for line in prompt.split("\n"):
+            if line.strip().lower().startswith("asha worker query:"):
+                query_line = line.lower()
+                break
+        search_text = query_line if query_line else prompt.lower()
 
+        priority_order = ["bleeding", "iron", "headache"]
         response = MATERNAL_RESPONSES["default"]
-        for keyword, resp in MATERNAL_RESPONSES.items():
-            if keyword in lower:
-                response = resp
+        for keyword in priority_order:
+            if keyword in search_text:
+                response = MATERNAL_RESPONSES[keyword]
                 break
 
         return ProviderResponse(

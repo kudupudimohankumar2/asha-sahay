@@ -2,6 +2,7 @@
 
 import json
 import logging
+import re
 from typing import Optional, Dict
 
 from ..base import ReasoningProvider, ProviderResponse, timed_call
@@ -19,6 +20,13 @@ class SarvamReasoningProvider(ReasoningProvider):
     def __init__(self, client, model: str = "sarvam-m"):
         self._client = client
         self._model = model
+
+    @staticmethod
+    def _strip_think_tags(text: str) -> str:
+        """Remove <think>...</think> reasoning traces from model output."""
+        cleaned = re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL)
+        cleaned = re.sub(r"<think>.*", "", cleaned, flags=re.DOTALL)
+        return cleaned.strip()
 
     @timed_call
     def generate(
@@ -42,6 +50,7 @@ class SarvamReasoningProvider(ReasoningProvider):
             )
             choice = response.choices[0]
             content = choice.message.content
+            content = self._strip_think_tags(content)
             usage = getattr(response, "usage", None)
             return ProviderResponse(
                 result=content,
